@@ -70,11 +70,12 @@ A paleta de cores foi escolhida para transmitir confiança, modernidade e clarez
 
 | Nome da Cor       | Hexadecimal | Uso Recomendado                     |
 |-------------------|-------------|-------------------------------------|
-| Azul Escuro       | `#07283B`   | Fundos principais, cabeçalhos       |
-| Azul Médio        | `#0C4975`   | Elementos de destaque, botões       |
-| Azul Claro        | `#6A8BB4`   | Detalhes, bordas, ícones            |
-| Bege Dourado      | `#E9D9AE`   | Fundos secundários, destaques suaves|
-| Creme             | `#EDE2C5`   | Fundos claros, áreas de conteúdo    |
+| Azul Escuro       | `#002236`   | Fundos principais, cabeçalhos       |
+| Azul Médio        | `#094672`   | Elementos de destaque, botões       |
+| Azul Claro        | `#658AB6`   | Detalhes, bordas, ícones            |
+| Laranja           | `#F08A0E`   | Botões de ação, alertas, destaques  |
+| Bege Claro        | `#F1E3C9`   | Fundos claros, áreas de conteúdo    |
+
 
 ---
 
