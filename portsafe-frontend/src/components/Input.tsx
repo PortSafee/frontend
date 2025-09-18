@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { InputText } from "primereact/inputtext";
+import { InputText } from 'primereact/inputtext';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 interface InputProps {
@@ -7,9 +7,10 @@ interface InputProps {
   type?: 'text' | 'password';
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string; // Garanta que className esteja na interface
 }
 
-export default function Input({ placeholder, type = 'text', value, onChange }: InputProps) {
+export default function Input({ placeholder, type = 'text', value, onChange, className }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const inputType = type === 'password' ? (showPassword ? 'text' : 'password') : type;
 
@@ -20,13 +21,14 @@ export default function Input({ placeholder, type = 'text', value, onChange }: I
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        className={className} // Passe o className para o InputText
         style={{
-          backgroundColor: '#343C42',
+          backgroundColor: '#333B40',
           color: '#757575',
-          border: '1px solid #75716E',
+          border: '1px solid #ffffff26',
           borderRadius: '15px',
-          width: '100%',
-          paddingRight: type === 'password' ? '40px' : '10px', // Espaço para o ícone
+          width:'100%',
+          paddingRight: type === 'password' ? '40px' : '10px',
         }}
       />
       {type === 'password' && (
