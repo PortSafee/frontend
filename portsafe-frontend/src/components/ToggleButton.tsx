@@ -17,12 +17,13 @@ const ToggleButton: React.FC<{ onToggle: (selected: string) => void }> = ({ onTo
   ];
 
   return (
+    <div className="mt-6">
     <div className="flex justify-center gap-2 bg-gray-800 p-2 rounded-xl">
       {options.map(({ label, icon }) => (
         <button
           key={label}
-          className={`flex items-center justify-center px-4 py-2 rounded-lg text-white font-medium text-sm transition-colors ${
-            selected === label ? 'bg-gradient-to-r from-blue-500 to-cyan-500' : 'bg-blue-950 hover:bg-gray-600'
+          className={`buttontoggle flex items-center justify-center px-4 py-2 rounded-lg text-white  text-sm transition-colors ${
+            selected === label ? 'bg-gradient-to-r from-blue-500 to-cyan-500' : 'bg-gray-800 hover:bg-gray-600'
           }`}
           onClick={() => handleToggle(label)}
         >
@@ -33,14 +34,19 @@ const ToggleButton: React.FC<{ onToggle: (selected: string) => void }> = ({ onTo
       <style jsx>{`
         div {
           display: flex;
-          background-color: #1f2535;
           padding: 4px;
           border-radius: 12px;
-          width: 15vw;
+          width: 20vw;
           align-items: center;
           margin: 0 auto;
         }
+
+        .buttontoggle{
+        width: 9.4vw;
+        font-size: 1.1rem;
+        }
       `}</style>
+    </div>
     </div>
   );
 };
