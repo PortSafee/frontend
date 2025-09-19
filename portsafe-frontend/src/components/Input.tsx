@@ -7,7 +7,7 @@ interface InputProps {
   type?: 'text' | 'password';
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  className?: string; // Garanta que className esteja na interface
+  className?: string;
 }
 
 export default function Input({ placeholder, type = 'text', value, onChange, className }: InputProps) {
@@ -15,7 +15,7 @@ export default function Input({ placeholder, type = 'text', value, onChange, cla
   const inputType = type === 'password' ? (showPassword ? 'text' : 'password') : type;
 
   return (
-    <div className="input-wrapper" style={{ position: 'relative', width: '30vw', margin: '0 auto' }}>
+    <div className="input-wrapper" style={{ position: 'relative', width: '100%', maxWidth:'600px', margin: '0 auto' }}>
       <InputText
         type={inputType}
         placeholder={placeholder}
@@ -28,7 +28,7 @@ export default function Input({ placeholder, type = 'text', value, onChange, cla
           border: '1px solid #ffffff26',
           borderRadius: '15px',
           width:'100%',
-          paddingRight: type === 'password' ? '40px' : '10px',
+          paddingRight: type === 'password' ? '2.5rem' : '0.625rem',
         }}
       />
       {type === 'password' && (

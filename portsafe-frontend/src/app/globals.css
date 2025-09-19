@@ -25,10 +25,40 @@ html, body {
 
 .title {
   font-family: var(--font-marmelad, cursive, sans-serif) !important;
-  font-size: 2.5rem !important;
+  font-size: 2.6rem !important;
   font-weight: 400; 
 }
 
 h1.title {
   font-family: var(--font-marmelad, cursive, sans-serif) !important;
+}
+
+/* globals.css */
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem !important; /* Reduz o tamanho da fonte para tablets */
+  }
+
+  .w-[38vw] {
+    width: 90%; /* Contêiner principal ocupa 90% da largura em telas menores */
+  }
+
+  .px-20 {
+    padding-left: 1rem;
+    padding-right: 1rem; /* Reduz o padding em telas menores */
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.5rem !important; /* Reduz o tamanho da fonte para celulares */
+  }
+
+  h3 {
+    font-size: 0.9rem; /* Ajusta o tamanho do subtítulo */
+  }
+
+  .w-[7vw] {
+    width: 20%; /* Aumenta proporcionalmente o logo em telas pequenas */
+  }
 }

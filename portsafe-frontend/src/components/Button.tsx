@@ -24,10 +24,19 @@ export default function Button({ label = "Entrar", onClick }: CustomButtonProps)
                 style={{
                     background: 'linear-gradient(to right, #3489F2, #0BB0D7)',
                     border: 'none',
-                    width: '20vw',
+                    width: '100%',
+                    height:'5.3vh',
+                    maxWidth: '300px',
                     marginTop: '10px',
                 }}
             />
+
+
+            <style jsx>{`
+      .p-button {
+  font-size: clamp(0.9rem, 3vw, 1rem);
+}
+      `}</style>
         </div>
     );
 }

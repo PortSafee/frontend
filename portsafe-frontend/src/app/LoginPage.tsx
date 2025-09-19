@@ -17,18 +17,18 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-[#002236] via-black to-[#002134]">
-      <div className="w-[38vw] bg-[#ffffff26] rounded-3xl text-white text-center">
-        <div className="flex items-center justify-between p-10 bg-[#084571] rounded-t-3xl h-[22vh]">
+      <div className="w-full max-w-[600px] min-w-[300px] bg-[#ffffff26] rounded-3xl text-white text-center">
+        <div className="flex items-center justify-between p-10 bg-[#084571] rounded-t-3xl min-h-[150px]">
           <div>
             <h1 className="title font-marmelad text-2xl">Bem-vindo de volta</h1>
             <h3>Faça login para ter acesso à sua conta</h3>
           </div>
-          <img src={IconLogo.src} alt="Logo" className="w-[7vw]" />
+          <img src={IconLogo.src} alt="Logo" className="w-[24%] max-w-[120px] min-w-[60px]" />
         </div>
 
         <ToggleButton onToggle={setUserType}/>
 
-        <div className="px-20">
+        <div className="px-4 sm:px-10 md:px-20">
           <p className="text-left mt-4 text-lg pl-4">E-mail</p>
           <Input
             placeholder="Insira aqui seu e-mail"
@@ -53,10 +53,10 @@ const LoginPage: React.FC = () => {
 
           <Button onClick={handleLogin} />
 
-          <h2 className="text-gray-600 text-sm mt-0.5 mb-2">
+          <h2 className="text-gray-400 text-sm mt-0.5 mb-2">
              Não tem uma conta?
           </h2>
-          <a href="/register" className="text-gray-400 block text-sm mt-0 hover:underline">
+          <a href="/register" className="text-gray-200 block text-sm mt-0 hover:underline">
             Cadastre-se aqui
           </a>
         </div>

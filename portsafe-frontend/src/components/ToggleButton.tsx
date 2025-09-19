@@ -17,7 +17,7 @@ const ToggleButton: React.FC<{ onToggle: (selected: string) => void }> = ({ onTo
   ];
 
   return (
-    <div className="mt-6">
+    <div className="mt-4 mb-4">
     <div className="flex justify-center gap-2 bg-gray-800 p-2 rounded-xl">
       {options.map(({ label, icon }) => (
         <button
@@ -36,14 +36,16 @@ const ToggleButton: React.FC<{ onToggle: (selected: string) => void }> = ({ onTo
           display: flex;
           padding: 4px;
           border-radius: 12px;
-          width: 20vw;
+          width: 100;
+          max-width: 300px;
           align-items: center;
           margin: 0 auto;
         }
 
         .buttontoggle{
-        width: 9.4vw;
-        font-size: 1.1rem;
+          width: 50%;
+          font-size: clamp(0.9rem, 3vw, 1rem); /* Tamanho de fonte responsivo */
+          padding: 0.5rem;
         }
       `}</style>
     </div>
