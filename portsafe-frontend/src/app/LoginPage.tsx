@@ -5,15 +5,30 @@ import ToggleButton from '@/components/ToggleButton';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import IconLogo from '@/assets/icon_logo.png';
+import axios from 'axios';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('Morador');
 
-  const handleLogin = () => {
-    console.log('Login attempt:', { email, password, userType });
-  };
+
+
+const handleLogin = async () => {
+  try {
+    const response = await axios.post('http://localhost:5128/api/Auth/login', {
+      Email: email,
+      Senha: password,
+    }, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const { Token } = response.data;
+    // Armazene Token (ex: localStorage.setItem('token', Token));
+    console.log('Login sucesso:', Token);
+  } catch (error) {
+    console.error('Erro:', error.response?.data?.Error || 'Login falhou');
+  }
+};
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-[#002236] via-black to-[#002134]">
