@@ -1,6 +1,6 @@
 
 import './index.css';
-import LoginPage from './LoginPage';
+import LoginPage from '@/app/LoginPage/page';
 
 export default function Home() {
   return (
