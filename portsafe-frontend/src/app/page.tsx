@@ -1,5 +1,9 @@
 import Image from "next/image";
 import './index.css';
+<<<<<<< HEAD
+=======
+import LoginPage from '@/app/LoginPage/page';
+>>>>>>> feature-registrationpage
 
 export default function Home() {
   return (

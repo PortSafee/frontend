@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';

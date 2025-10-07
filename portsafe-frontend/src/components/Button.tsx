@@ -1,5 +1,6 @@
-// components/Button.tsx
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import { Button as PrimeButton } from 'primereact/button';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
