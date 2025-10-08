@@ -57,7 +57,8 @@ const LoginPage: React.FC = () => {
         </div>
       )}
 
-      <div className="w-full max-w-[600px] min-w-[300px] bg-[#ffffff26] rounded-3xl text-white text-center mx-auto">
+      <div className="w-full max-w-[600px] min-w-[300px] bg-[#ffffff26] rounded-3xl text-white text-center mx-4 sm:mx-6 md:mx-auto">
+      
         <div className="flex items-center justify-between p-10 bg-[#084571] rounded-t-3xl min-h-[150px]">
           <div>
             <h1 className="title font-marmelad text-2xl">Bem-vindo de volta</h1>
@@ -75,7 +76,7 @@ const LoginPage: React.FC = () => {
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full h-10"
+            className="w-full h-10 pl-4"
           />
 
           <p className="text-left mt-4 text-lg pl-4">Senha</p>
@@ -84,19 +85,23 @@ const LoginPage: React.FC = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full h-10"
+            className="w-full h-10 pl-4"
           />
 
-          <a href="#" className="block text-left text-sm pl-4 mt-2 hover:underline">
+          <a href="#" className="block text-left text-sm pl-4 pt-2 pb-2 mt-2 hover:underline">
             Esqueceu a senha?
           </a>
 
-          <Button onClick={handleLogin} />
+          <Button
+        nome="Entrar"
+        estilo="primary"
+        clique={handleLogin}
+      />
 
-          <h2 className="text-gray-400 text-sm mt-0.5 mb-2">
+          <h2 className="text-gray-400 text-sm mt-0.5 mb-2 pt-2">
             Não tem uma conta?
           </h2>
-          <a href="/register" className="text-blue-300 block text-sm mt-0 hover:underline">
+          <a href="/register" className="text-blue-300 block text-sm mt-0 pb-2 hover:underline">
             Cadastre-se aqui
           </a>
         </div>

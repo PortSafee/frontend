@@ -1,43 +1,16 @@
-"use client";
-
-import React, { useState } from 'react';
-import { Button as PrimeButton } from 'primereact/button';
-import 'primereact/resources/themes/lara-light-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-
-interface CustomButtonProps {
-    label?: string;
-    onClick?: () => void;
-    icon?: string;
-    disabled?: boolean;
-    className?: string;
-    style?: React.CSSProperties;
+interface IBotao {
+  nome: string;
+  estilo: "primary" | "logout" | "outline" | "success" | "error" | "transparent";
+  clique: () => void;
 }
 
-
-export default function Button({ label = "Entrar", onClick }: CustomButtonProps) {
-    return (
-        <div className="card flex justify-center pb-3 pt-3">
-            <PrimeButton
-                label={label}
-                onClick={onClick}
-                style={{
-                    background: 'linear-gradient(to right, #3489F2, #0BB0D7)',
-                    border: 'none',
-                    width: '100%',
-                    height:'5.3vh',
-                    maxWidth: '300px',
-                    marginTop: '10px',
-                }}
-            />
-
-
-            <style jsx>{`
-      .p-button {
-  font-size: clamp(0.9rem, 3vw, 1rem);
-}
-      `}</style>
-        </div>
-    );
+export default function Button({ nome, estilo, clique }: IBotao) {
+  return (
+    <input
+      type="button"
+      value={nome}
+      onClick={clique}
+      className={`btn btn-${estilo}`} // Usa as classes definidas no global.css
+    />
+  );
 }
