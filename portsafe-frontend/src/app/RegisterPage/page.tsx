@@ -116,7 +116,7 @@ const RegisterPage: React.FC = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full h-10"
+              className="w-full h-10  pl-4"
             />
             <p className="text-left mt-4 text-lg pl-4">Senha</p>
             <Input
@@ -124,7 +124,7 @@ const RegisterPage: React.FC = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full h-10"
+              className="w-full h-10  pl-4"
             />
             <p className="text-left mt-4 text-lg pl-4">Telefone</p>
             <Input
@@ -132,7 +132,15 @@ const RegisterPage: React.FC = () => {
               type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full h-10"
+              className="w-full h-10  pl-4"
+            />
+            <p className="text-left mt-4 text-lg pl-4">Bloco</p>
+            <Input
+              placeholder="Bloco A, B, C..."
+              type="text"
+              value={bloco}
+              onChange={(e) => setBloco(e.target.value)}
+              className="w-full h-10  pl-4"
             />
           </div>
           <div>
@@ -142,7 +150,7 @@ const RegisterPage: React.FC = () => {
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-10"
+              className="w-full h-10  pl-4"
             />
             <p className="text-left mt-4 text-lg pl-4">Confirmar Senha</p>
             <Input
@@ -150,7 +158,7 @@ const RegisterPage: React.FC = () => {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full h-10"
+              className="w-full h-10  pl-4"
             />
             <p className="text-left mt-4 text-lg pl-4">CPF</p>
             <Input
@@ -158,47 +166,29 @@ const RegisterPage: React.FC = () => {
               type="text"
               value={cpf}
               onChange={(e) => setCpf(e.target.value)}
-              className="w-full h-10"
+              className="w-full h-10  pl-4"
             />
-          </div>
-        </div>
-        <div className="px-2 sm:px-5 md:px-10 grid grid-cols-3 gap-4 mt-4">
-          <div>
-            <p className="text-left mt-4 text-lg pl-4">Condomínio</p>
-            <Select
-              placeholder="Selecione aqui"
-              value={condominio}
-              onChange={(e) => setCondominio(e.target.value)}
-              className="w-full h-10"
-              options={['Opção 1', 'Opção 2']}
-            />
-          </div>
-          <div>
-            <p className="text-left mt-4 text-lg pl-4">Bloco</p>
-            <Select
-              placeholder="Selecione aqui"
-              value={bloco}
-              onChange={(e) => setBloco(e.target.value)}
-              className="w-full h-10"
-              options={['Opção 1', 'Opção 2']}
-            />
-          </div>
-          <div>
-            <p className="text-left mt-4 text-lg pl-4">Apartamento</p>
-            <Select
-              placeholder="Selecione aqui"
+             <p className="text-left mt-4 text-lg pl-4">Apartamento</p>
+            <Input
+              placeholder="Apt 8"
+              type="text"
               value={apartamento}
               onChange={(e) => setApartamento(e.target.value)}
-              className="w-full h-10"
-              options={['Opção 1', 'Opção 2']}
+              className="w-full h-10  pl-4"
             />
+            
           </div>
         </div>
-        <Button onClick={handleRegister} label="Criar Nova Conta" />
-        <h2 className="text-gray-400 text-sm mt-0.5 mb-2">
+        
+       <Button
+               nome="Entrar"
+               estilo="primary"
+               clique={handleRegister}
+             />
+        <h2 className="text-gray-400 text-sm mt-0.5 mb-2 pt-2">
           Já tem uma conta?
         </h2>
-        <a href="/login" className="text-blue-300 block text-sm mt-0 hover:underline">
+        <a href="/login" className="text-blue-300 block text-sm mt-0 pb-2 hover:underline">
           Faça login aqui!
         </a>
       </div>

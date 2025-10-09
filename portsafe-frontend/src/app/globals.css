@@ -38,6 +38,7 @@ h1.title {
   width: 80%;
   height: 5.3vh;
   font-weight: 600;
+  margin-top: 2vh;
   background-color: #e5e7eb;
   cursor: pointer;
   transition: background-color 0.3s;
