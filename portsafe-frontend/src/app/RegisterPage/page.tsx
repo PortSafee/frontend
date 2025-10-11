@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import ToggleButton from '@/components/ToggleButton';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
-import Select from '@/components/Select';
 import IconLogo from '@/assets/icons/icon_logo.png';
 import axios, { AxiosError } from 'axios';
 
@@ -22,14 +21,8 @@ const RegisterPage: React.FC = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validateCpf = (cpf: string) => {
-    return cpf.replace(/\D/g, '').length === 11;
-  };
+  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validateCpf = (cpf: string) => cpf.replace(/\D/g, '').length === 11;
 
   const handleRegister = async () => {
     setError('');
@@ -51,16 +44,18 @@ const RegisterPage: React.FC = () => {
     const endereco = `Condomínio: ${condominio}, Bloco: ${bloco}, Apartamento: ${apartamento}, CPF: ${cpf}`;
 
     try {
-      const response = await axios.post('http://localhost:5128/api/Auth/cadastro', {
-        Email: email,
-        Senha: password,
-        Nome: name,
-        Telefone: phone,
-        Endereco: endereco,
-        Tipo: userType
-      }, {
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const response = await axios.post(
+        'http://localhost:5128/api/Auth/cadastro',
+        {
+          Email: email,
+          Senha: password,
+          Nome: name,
+          Telefone: phone,
+          Endereco: endereco,
+          Tipo: userType,
+        },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
 
       if (response.status === 200) {
         setSuccess('Cadastro realizado com sucesso!');
@@ -89,6 +84,8 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-[#002236] via-black to-[#002134] relative">
+
+      {/* Notificações */}
       {error && (
         <div className="absolute top-4 right-4 bg-gradient-to-r from-[#338AF2] to-[#0DB0D8] text-white p-2 rounded">
           {error}
@@ -99,7 +96,11 @@ const RegisterPage: React.FC = () => {
           {success}
         </div>
       )}
-      <div className="w-full max-w-[600px] min-w-[300px] bg-[#ffffff26] rounded-3xl text-white text-center mx-auto">
+
+      {/* Container principal*/}
+      <div className="w-full max-w-[600px] min-w-[300px] bg-[#ffffff26] rounded-3xl text-white text-center mx-4 sm:mx-6 md:mx-auto">
+
+        {/* Cabeçalho */}
         <div className="flex items-center justify-between p-10 bg-[#084571] rounded-t-3xl min-h-[150px]">
           <div>
             <h1 className="title font-marmelad text-2xl">Criar Nova Conta</h1>
@@ -107,8 +108,11 @@ const RegisterPage: React.FC = () => {
           </div>
           <img src={IconLogo.src} alt="Logo" className="w-[24%] max-w-[120px] min-w-[60px]" />
         </div>
+
         <ToggleButton onToggle={setUserType} options={['Morador', 'Porteiro']} />
-        <div className="px-2 sm:px-5 md:px-10 grid grid-cols-2 gap-4">
+
+        {/* Campos */}
+        <div className="px-4 sm:px-10 md:px-20 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <p className="text-left mt-4 text-lg pl-4">Nome Completo</p>
             <Input
@@ -116,33 +120,37 @@ const RegisterPage: React.FC = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full h-10  pl-4"
+              className="w-full h-10 pl-4"
             />
+
             <p className="text-left mt-4 text-lg pl-4">Senha</p>
             <Input
               placeholder="Insira aqui sua senha"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full h-10  pl-4"
+              className="w-full h-10 pl-4"
             />
+
             <p className="text-left mt-4 text-lg pl-4">Telefone</p>
             <Input
               placeholder="(15) 9999-9999"
               type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full h-10  pl-4"
+              className="w-full h-10 pl-4"
             />
+
             <p className="text-left mt-4 text-lg pl-4">Bloco</p>
             <Input
               placeholder="Bloco A, B, C..."
               type="text"
               value={bloco}
               onChange={(e) => setBloco(e.target.value)}
-              className="w-full h-10  pl-4"
+              className="w-full h-10 pl-4"
             />
           </div>
+
           <div>
             <p className="text-left mt-4 text-lg pl-4">E-mail</p>
             <Input
@@ -150,41 +158,41 @@ const RegisterPage: React.FC = () => {
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-10  pl-4"
+              className="w-full h-10 pl-4"
             />
+
             <p className="text-left mt-4 text-lg pl-4">Confirmar Senha</p>
             <Input
               placeholder="Reescreva sua senha"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full h-10  pl-4"
+              className="w-full h-10 pl-4"
             />
+
             <p className="text-left mt-4 text-lg pl-4">CPF</p>
             <Input
               placeholder="123.456.789-01"
               type="text"
               value={cpf}
               onChange={(e) => setCpf(e.target.value)}
-              className="w-full h-10  pl-4"
+              className="w-full h-10 pl-4"
             />
-             <p className="text-left mt-4 text-lg pl-4">Apartamento</p>
+
+            <p className="text-left mt-4 text-lg pl-4">Apartamento</p>
             <Input
               placeholder="Apt 8"
               type="text"
               value={apartamento}
               onChange={(e) => setApartamento(e.target.value)}
-              className="w-full h-10  pl-4"
+              className="w-full h-10 pl-4"
             />
-            
           </div>
         </div>
-        
-       <Button
-               nome="Entrar"
-               estilo="primary"
-               clique={handleRegister}
-             />
+
+        {/* Botão e link */}
+        <Button nome="Entrar" estilo="primary" clique={handleRegister} />
+
         <h2 className="text-gray-400 text-sm mt-0.5 mb-2 pt-2">
           Já tem uma conta?
         </h2>
