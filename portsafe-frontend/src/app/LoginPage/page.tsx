@@ -88,7 +88,7 @@ const LoginPage: React.FC = () => {
             className="w-full h-10 pl-4"
           />
 
-          <a href="#" className="block text-left text-sm pl-4 pt-2 pb-2 mt-2 hover:underline">
+          <a href="#" className="block text-left text-sm pl-4 mt-3 hover:underline">
             Esqueceu a senha?
           </a>
 
@@ -96,12 +96,13 @@ const LoginPage: React.FC = () => {
         nome="Entrar"
         estilo="primary"
         clique={handleLogin}
+        className='mt-3 mb-3'
       />
 
-          <h2 className="text-gray-400 text-sm mt-0.5 mb-2 pt-2">
+          <h2 className="text-gray-400 text-sm ">
             Não tem uma conta?
           </h2>
-          <a href="/register" className="text-blue-300 block text-sm mt-0 pb-2 hover:underline">
+          <a href="/register" className="text-blue-300 block text-sm mt-0 mb-3 hover:underline">
             Cadastre-se aqui
           </a>
         </div>

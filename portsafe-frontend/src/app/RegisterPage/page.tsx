@@ -190,13 +190,17 @@ const RegisterPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Botão e link */}
-        <Button nome="Entrar" estilo="primary" clique={handleRegister} />
+        <Button
+                nome="Entrar"
+                estilo="primary"
+                clique={handleRegister}
+                className='mt-3 mb-3'
+              />
 
-        <h2 className="text-gray-400 text-sm mt-0.5 mb-2 pt-2">
+        <h2 className="text-gray-400 text-sm ">
           Já tem uma conta?
         </h2>
-        <a href="/login" className="text-blue-300 block text-sm mt-0 pb-2 hover:underline">
+        <a href="/login" className="text-blue-300 block text-sm mt-0 mb-3 hover:underline">
           Faça login aqui!
         </a>
       </div>

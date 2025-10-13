@@ -6,7 +6,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 interface InputProps {
   placeholder: string;
-  type?: "text" | "password";
+  type?: "text" | "password" | "email";
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;

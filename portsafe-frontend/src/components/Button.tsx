@@ -1,16 +1,17 @@
 interface IBotao {
   nome: string;
-  estilo: "primary" | "logout" | "outline" | "success" | "error" | "transparent";
+  estilo: "primary" | "secundary";
   clique: () => void;
+  className?: string;
 }
 
-export default function Button({ nome, estilo, clique }: IBotao) {
+export default function Button({ nome, estilo, clique, className }: IBotao) {
   return (
-    <input
-      type="button"
-      value={nome}
+    <button
       onClick={clique}
-      className={`btn btn-${estilo}`} // Usa as classes definidas no global.css
-    />
+      className={`btn btn-${estilo} ${className ?? ""}`}
+    >
+      {nome}
+    </button>
   );
 }
