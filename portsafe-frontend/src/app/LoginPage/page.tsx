@@ -51,14 +51,14 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-[#002236] via-black to-[#002134] relative">
 
       {/*Exibição de erros através de notificação*/}
-            {error && (
+      {error && (
         <div className="absolute top-4 right-4 bg-gradient-to-r from-[#338AF2] to-[#0DB0D8] text-white p-2 rounded">
           {error}
         </div>
       )}
 
       <div className="w-full max-w-[600px] min-w-[300px] bg-[#ffffff26] rounded-3xl text-white text-center mx-4 sm:mx-6 md:mx-auto">
-      
+
         <div className="flex items-center justify-between p-10 bg-[#084571] rounded-t-3xl min-h-[150px]">
           <div>
             <h1 className="title font-marmelad text-2xl">Bem-vindo de volta</h1>
@@ -67,7 +67,7 @@ const LoginPage: React.FC = () => {
           <img src={IconLogo.src} alt="Logo" className="w-[24%] max-w-[120px] min-w-[60px]" />
         </div>
 
-        <ToggleButton onToggle={setUserType}/>
+        <ToggleButton onToggle={setUserType} />
 
         <div className="px-4 sm:px-10 md:px-20">
           <p className="text-left mt-4 text-lg pl-4">E-mail</p>
@@ -93,11 +93,11 @@ const LoginPage: React.FC = () => {
           </a>
 
           <Button
-        nome="Entrar"
-        estilo="primary"
-        clique={handleLogin}
-        className='mt-3 mb-3'
-      />
+            nome="Entrar"
+            estilo="primary"
+            clique={handleLogin}
+            className='mt-3 mb-3'
+          />
 
           <h2 className="text-gray-400 text-sm ">
             Não tem uma conta?
