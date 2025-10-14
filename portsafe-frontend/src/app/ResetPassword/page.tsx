@@ -53,14 +53,14 @@ const ResetPassword: React.FC = () => {
             <div className="w-full max-w-[600px] min-w-[300px] bg-[#ffffff26] rounded-3xl text-white text-center mx-4 sm:mx-6 md:mx-auto">
 
                 <div className="flex items-center justify-between p-10 bg-[#084571] rounded-t-3xl min-h-[150px]">
-                    <div>
+                    <div className="flex-1 text-center">
                         <h1 className="title font-marmelad text-2xl">Nova Senha</h1>
                         <h3>Digite sua nova senha</h3>
                     </div>
                     <img src={IconLogo.src} alt="Logo" className="w-[24%] max-w-[120px] min-w-[60px]" />
                 </div>
 
-                <div className="px-4 sm:px-10 md:px-20 mt-6 mb-4">
+                <div className="px-4 sm:px-10 md:px-20 mt-4 mb-4">
                     <p className="text-left text-lg pl-4 mt-4">Nova Senha</p>
                     <Input
                         placeholder="Insira aqui sua nova senha "
@@ -83,7 +83,7 @@ const ResetPassword: React.FC = () => {
                         nome="Salvar e Redefinir"
                         estilo="primary"
                         clique={handleResetPassword}
-                        className='mb-3 mt-3 px-4 w-full text-sm sm:text-base md:text-base truncate'
+                        className='mt-3 px-4 w-full text-sm sm:text-base md:text-base truncate'
                     />
                 </div>
             </div>
