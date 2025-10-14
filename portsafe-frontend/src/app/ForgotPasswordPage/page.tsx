@@ -30,12 +30,12 @@ const ForgotPasswordPage: React.FC = () => {
       );
 
       if (response.status === 200) {
-        setSuccess('Link de recuperação enviado para seu e-mail!');
+        setSuccess('E-mail validado! Redefina sua senha!');
         setEmail('');
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.Error || 'Erro ao enviar link. Tente novamente!';
+        const errorMessage = error.response?.data?.Error || 'Tente novamente!';
         setError(errorMessage);
         console.error('Erro:', errorMessage);
       } else {
