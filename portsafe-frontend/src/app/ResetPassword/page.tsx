@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import ToggleButton from '@/components/ToggleButton';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import IconLogo from '@/assets/icons/icon_logo.png';
@@ -59,6 +58,7 @@ const ResetPassword: React.FC = () => {
                     </div>
                     <img src={IconLogo.src} alt="Logo" className="w-[24%] max-w-[120px] min-w-[60px]" />
                 </div>
+
 
                 <div className="px-4 sm:px-10 md:px-20 mt-4 mb-4">
                     <p className="text-left text-lg pl-4 mt-4">Nova Senha</p>
