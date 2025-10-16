@@ -57,6 +57,21 @@ h1.title {
   background: linear-gradient(to right, #A04204, #A42423);
 } 
 
+.btn-portaria{ 
+  background: linear-gradient(to right, #1FC364, #12BA7D); 
+}
+.btn-portaria:hover{ 
+  background: linear-gradient(to right, #069240ff, #018f5bff); 
+}
+
+.btn-entregador{ 
+  background: linear-gradient(to right, #F77B14, #EBB009); 
+}
+.btn-entregador:hover{ 
+  background: linear-gradient(to right, #ce5d00ff, #b28407ff); 
+}
+
+
 /* === Responsividade === */
 @media (max-width: 768px) {
   .title { font-size: 2rem !important; }
