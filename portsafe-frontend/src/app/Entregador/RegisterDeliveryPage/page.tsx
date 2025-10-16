@@ -10,24 +10,24 @@ const RegisterDeliveryPage: React.FC = () => {
   const [tipoEntrega, setTipoEntrega] = useState<string>("");
 
   return (
-    <div className="flex flex-col md:flex-row h-screen  bg-gradient-to-r from-[#002236] via-black to-[#002134]">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134] overflow-x-hidden">
       {/* Lado esquerdo - Logo e nome */}
-      <div className="flex flex-col justify-center items-center w-50 md:w-1/2 text-center p-6">
+      <div className="flex flex-col justify-center items-center w-full md:w-1/2 text-center p-6">
         <img
-                    src={Logo.src}
-                    alt="Logo PortSafe"
-                    className="w-50 sm:w-100 mb-2"
-                />
-                <p className="text-white text-2xl ">
-                    Sistema de Entregas do Condomínio
-                </p>
+          src={Logo.src}
+          alt="Logo PortSafe"
+          className="w-50 sm:w-60 md:w-80 mb-2 max-w-full"
+        />
+        <p className="text-white text-lg sm:text-xl md:text-2xl">
+          Sistema de Entregas do Condomínio
+        </p>
       </div>
 
       {/* Lado direito - Formulário */}
-      <div className="flex flex-col justify-center items-center w-full md:w-1/2 px-6">
+      <div className="flex flex-col justify-center items-center w-full md:w-1/2 px-4 sm:px-6 md:px-10 overflow-y-auto">
         {/* Barra de progresso */}
-        <div className="w-150 mr-16 mb-6">
-          <div className="flex justify-between items-center text-white text-sm mb-1">
+        <div className="w-150 sm:w-125 md:w-150 max-w-full mr-0 md:mr-16 mb-6">
+          <div className="flex justify-between items-center text-white text-xs sm:text-sm mb-1">
             <p>Passo 1 de 4</p>
             <p>25%</p>
           </div>
@@ -37,88 +37,108 @@ const RegisterDeliveryPage: React.FC = () => {
         </div>
 
         {/* Card de registro */}
-        <div className="bg-[#ffffff18] border-2 border-[#606060] mr-0 md:mr-16 rounded-2xl w-150 text-center shadow-lg overflow-hidden">
+        <div className="bg-[#ffffff18] border-2 border-[#606060] mr-0 md:mr-16 rounded-2xl w-150 max-w-full text-center shadow-lg overflow-hidden">
           {/* Cabeçalho do card */}
           <div className="flex flex-col items-center justify-center p-4 bg-[#084571] text-white">
-            <h1 className="title font-marmelad !text-3xl mb-1">Registrar Entrega</h1>
-            <h3 className="text-base opacity-90">
+            <h1 className="title font-marmelad !text-2xl sm:!text-3xl mb-1">
+              Registrar Entrega
+            </h1>
+            <h3 className="text-sm sm:text-base opacity-90">
               Preencha os dados do destinatário
             </h3>
           </div>
 
           {/* Inputs */}
-         <div className="px-4 sm:px-10 md:px-6">
-          <p className="text-left mt-4 text-base pl-5 text-white">Nome do Destinatário / Morador</p>
+          <div className="px-4 sm:px-8 md:px-10">
+            <p className="text-left mt-4 text-sm sm:text-base pl-3 text-white">
+              Nome do Destinatário / Morador
+            </p>
             <Input
               placeholder="Ex: João Silva"
-              type="text"              
-              className="!w-135 h-8 pl-4"
+              type="text"
+              className="!w-135 max-w-full h-8 pl-4"
             />
-            <p className="text-left mt-4 text-base pl-5 text-white">Número da Casa / Apartamento</p>
+            <p className="text-left mt-4 text-sm sm:text-base pl-3 text-white">
+              Número da Casa / Apartamento
+            </p>
             <Input
               placeholder="Ex: 1205, Bloco A - Apt 804"
-              type="text"              
-              className="!w-135 h-8 pl-4"
+              type="text"
+              className="!w-135 max-w-full h-8 pl-4"
             />
           </div>
 
-          {/* Tipo de Entrega */}
-           <p className="text-left mt-4 text-base pl-10 text-white">Tipo de Entrega</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 pl-8 pr-8">
-            {/* Entrega Padrão */}
-            <div
-              onClick={() => setTipoEntrega("Padrão")}
-              className={`cursor-pointer p-4 rounded-xl border ${
-                tipoEntrega === "Padrão"
-                  ? "border-[#0CB0D8] bg-[#ffffff26]" // cor da borda e do card com clique
-                  : "border-transparent bg-[#ffffff26]" // cor da borda e do card sem clique
-              } hover:bg-[#01384D]/70 transition`}
-            >
-              <div className="w-8 h-8 bg-[#00E096] rounded-full mx-auto mb-2"></div>
-              <p className="text-gray-100 text-sm font-bold">Padrão</p>
-              <p className="text-gray-400 text-xs">
-                Encomendas, correspondências e documentos
-              </p>
-            </div>
+         {/* Tipo de Entrega */}
+<p className="flex flex-wrap text-left mt-4 text-sm sm:text-base pl-4 sm:pl-6 text-white">
+  Tipo de Entrega
+</p>
 
-                {/* Entrega Perecível */}
-            <div
-              onClick={() => setTipoEntrega("Perecível")}
-              className={`cursor-pointer p-4 rounded-xl border ${
-                tipoEntrega === "Perecível"
-                  ? "border-[#0CB0D8] bg-[#ffffff26]" // cor da borda e do card com clique
-                  : "border-transparent bg-[#ffffff26]" // cor da borda e do card sem clique
-              } hover:bg-[#01384D]/70 transition`}
-            >
-              <div className="w-8 h-8 bg-[#0CB0D8] rounded-full mx-auto mb-2"></div>
-              <p className="text-gray-100 text-sm font-bold">Perecível </p>
-              <p className="text-gray-400 text-xs">
-                Alimentos e/ou produtos refrigerados
-              </p>
-            </div>
+<div className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4 sm:gap-5 mb-6 px-4 sm:px-6">
 
-            {/* Entrega Volumosa */}
-            <div
-              onClick={() => setTipoEntrega("Volumosa")}
-              className={`cursor-pointer p-4 rounded-xl border ${
-                tipoEntrega === "Volumosa"
-                  ? "border-[#0CB0D8] bg-[#ffffff26]" // cor da borda e do card com clique
-                  : "border-transparent bg-[#ffffff26]" // cor da borda e do card sem clique
-              } hover:bg-[#01384D]/70 transition`}
-            >
-              <div className="w-8 h-8 bg-[#F77B14] rounded-full mx-auto mb-2"></div>
-              <p className="text-gray-100 text-sm font-bold">Volumosa</p>
-              <p className="text-gray-400 text-xs">
-                Pacotes grandes que não cabem no armário
-              </p>
-            </div>
-          </div>
+  {/* Entrega Padrão */}
+  <div
+    onClick={() => setTipoEntrega("Padrão")}
+    className={`cursor-pointer p-3 sm:p-4 md:p-5 rounded-xl border w-full sm:w-auto max-w-[240px] mx-auto ${
+      tipoEntrega === "Padrão"
+        ? "border-[#0CB0D8] bg-[#ffffff26]"
+        : "border-transparent bg-[#ffffff26]"
+    } hover:bg-[#01384D]/70 transition`}
+  >
+    <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 bg-[#00E096] rounded-full mx-auto mb-2 sm:mb-3"></div>
+    <p className="text-gray-100 text-sm sm:text-base md:text-lg font-bold text-center">
+      Padrão
+    </p>
+    <p className="text-gray-400 text-[0.7rem] sm:text-xs md:text-sm leading-snug text-center">
+      Encomendas, correspondências e documentos
+    </p>
+  </div>
+
+  {/* Entrega Perecível */}
+  <div
+    onClick={() => setTipoEntrega("Perecível")}
+    className={`cursor-pointer p-3 sm:p-4 md:p-5 rounded-xl border w-full sm:w-auto max-w-[240px] mx-auto ${
+      tipoEntrega === "Perecível"
+        ? "border-[#0CB0D8] bg-[#ffffff26]"
+        : "border-transparent bg-[#ffffff26]"
+    } hover:bg-[#01384D]/70 transition`}
+  >
+    <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 bg-[#0CB0D8] rounded-full mx-auto mb-2 sm:mb-3"></div>
+    <p className="text-gray-100 text-sm sm:text-base md:text-lg font-bold text-center">
+      Perecível
+    </p>
+    <p className="text-gray-400 text-[0.7rem] sm:text-xs md:text-sm leading-snug text-center">
+      Alimentos e/ou produtos refrigerados
+    </p>
+  </div>
+
+  {/* Entrega Volumosa */}
+  <div
+    onClick={() => setTipoEntrega("Volumosa")}
+    className={`cursor-pointer p-3 sm:p-4 md:p-5 rounded-xl border w-full sm:w-auto max-w-[240px] mx-auto ${
+      tipoEntrega === "Volumosa"
+        ? "border-[#0CB0D8] bg-[#ffffff26]"
+        : "border-transparent bg-[#ffffff26]"
+    } hover:bg-[#01384D]/70 transition`}
+  >
+    <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 bg-[#F77B14] rounded-full mx-auto mb-2 sm:mb-3"></div>
+    <p className="text-gray-100 text-sm sm:text-base md:text-lg font-bold text-center">
+      Volumosa
+    </p>
+    <p className="text-gray-400 text-[0.7rem] sm:text-xs md:text-sm leading-snug text-center">
+      Pacotes grandes que não cabem no armário
+    </p>
+  </div>
+</div>
+
 
           {/* Botão */}
-          <Button 
-          nome="Confirmar e Continuar" 
-          estilo="primary"
-          className="!w-133 ml-8 mb-8 text-white" />
+          <div className="flex justify-center px-4 sm:px-6 mb-8">
+            <Button
+              nome="Confirmar e Continuar"
+              estilo="primary"
+              className="!w-133 max-w-full text-white text-xs sm:text-sm md:text-base"
+            />
+          </div>
         </div>
       </div>
     </div>
