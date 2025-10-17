@@ -8,13 +8,14 @@ interface IBotao {
 
 export default function Button({ nome, estilo, clique, className, icon }: IBotao) {
   return (
-    <button
-      onClick={clique}
-       className={`flex items-center justify-center gap-2 btn btn-${estilo} ${className ?? ""}`}
-    >
-      {nome}
-      {icon && <span>{icon}</span>} {/* renderiza o ícone se existir */}
-
-    </button>
+    <div className="flex justify-center">
+      <button
+        onClick={clique}
+        className={`flex items-center justify-center gap-2 btn btn-${estilo} ${className ?? ""}`}
+      >
+        {icon && <span>{icon}</span>}
+        {nome}
+      </button>
+    </div>
   );
 }
