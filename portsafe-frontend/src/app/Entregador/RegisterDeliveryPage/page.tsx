@@ -130,6 +130,24 @@ const RegisterDeliveryPage: React.FC = () => {
   </div>
 </div>
 
+{/* Modal */}
+{(tipoEntrega === "Volumosa" || tipoEntrega === "Perecível") && (
+  <>
+    <div className="fixed inset-0 bg-[#2258847d] bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-gradient-to-r from-[#000000] to-[#061f34] rounded-xl p-6  w-[35vw] text-center">
+        <h3 className=" title font-marmelad !text-3xl font-bold text-[#E9D9AE] mt-4 mb-4">Atenção!</h3>
+        <p className="text-gray-300 text-xl mb-6">Para esse tipo de encomenda é necessário se dirigir à portaria!</p>
+        <Button 
+          nome="Entendi" 
+          estilo="secundary" 
+          className="w-full text-white"
+          clique={() => setTipoEntrega("")} 
+        />
+      </div>
+    </div>
+  </>
+)}
+
 
           {/* Botão */}
           <div className="flex justify-center px-4 sm:px-6 mb-8">
