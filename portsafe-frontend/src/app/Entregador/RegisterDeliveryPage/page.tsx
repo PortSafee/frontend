@@ -69,11 +69,11 @@ const RegisterDeliveryPage: React.FC = () => {
           </div>
 
          {/* Tipo de Entrega */}
-<p className="flex flex-wrap text-left mt-4 text-sm sm:text-base pl-4 sm:pl-6 text-white">
+<p className="flex flex-wrap text-left mt-4 text-sm sm:text-base pl-4 sm:pl-12 text-white">
   Tipo de Entrega
 </p>
 
-<div className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4 sm:gap-5 mb-6 px-4 sm:px-6">
+<div className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4 sm:gap-5 mb-6 px-4 sm:px-8">
 
   {/* Entrega Padrão */}
   <div
