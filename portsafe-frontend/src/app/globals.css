@@ -71,6 +71,15 @@ h1.title {
   background: linear-gradient(to right, #ce5d00ff, #b28407ff); 
 }
 
+.btn-transparent{
+  border: solid #1f9ce4;
+}
+
+.btn-transparent:hover{
+  border: solid #084571;
+}
+
+
 
 /* === Responsividade === */
 @media (max-width: 768px) {

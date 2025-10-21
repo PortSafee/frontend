@@ -1,6 +1,6 @@
 interface IBotao {
   nome: string;
-  estilo: "primary" | "secundary" | "portaria" | "entregador";
+  estilo: "primary" | "secundary" | "transparent" | "portaria" | "entregador";
   clique?: () => void;
   className?: string;
   icon?: React.ReactNode;
