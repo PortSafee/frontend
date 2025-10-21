@@ -85,7 +85,7 @@ const RegisterDeliveryPage: React.FC = () => {
 
 
                     {/* Endereço */}
-                     <div className="px-4 sm:px-8 md:px-4 bg-[#1fc3631b] rounded-2xl m-6 mt-8 p-4 border-2 border-[#1FC364]">
+                    <div className="px-4 sm:px-8 md:px-4 bg-[#1fc3631b] rounded-2xl m-6 mt-8 p-4 border-2 border-[#1FC364]">
                         <p className="text-left text-sm sm:text-base text-white font-bold flex items-center">
                             <CiLocationOn className="inline-block mr-2 text-xl text-[#1FC364]" />
                             Endereço
@@ -98,15 +98,15 @@ const RegisterDeliveryPage: React.FC = () => {
                         <div className="flex justify-between items-center mt-2">
                             <p className="text-sm sm:text-base font-thin text-white">
                                 {localizacao}
-                            </p>                            
+                            </p>
                         </div>
                         <div className="flex justify-between items-center mt-2">
                             <p className="text-sm sm:text-base font-thin text-white">
                                 CEP: {cep}
-                            </p>                            
+                            </p>
                         </div>
-                        <div className="bg-[#1fc364] text-white font-bold h-[4vh] w-[12vw] rounded-2xl mt-2 border-2 border-[#1FC364]">
-                            Validado no Sistema 
+                        <div className="bg-[#1fc364] text-white font-bold h-auto min-h-[1vh] w-fit min-w-[12vw] px-4 py-2 rounded-2xl mt-2 border-2 border-[#1FC364] flex items-center justify-center text-center">
+                            Validado no Sistema
                         </div>
                     </div>
 
