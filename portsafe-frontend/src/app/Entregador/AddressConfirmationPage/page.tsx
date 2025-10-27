@@ -56,7 +56,7 @@ const RegisterDeliveryPage: React.FC = () => {
                     </div>
 
                     {/* Dados da Entrega */}
-                    <div className="px-4 sm:px-8 md:px-4 bg-[#ffffff18] rounded-2xl m-6 mt-8 p-4 border-2 border-[#606060]">
+                    <div className="px-4 sm:px-8 md:px-4 bg-[#ffffff18] rounded-2xl m-6 mt-6 p-4 border-2 border-[#606060]">
                         <p className="text-left text-sm sm:text-base text-white font-bold flex items-center">
                             <BsPeople className="inline-block mr-2 text-xl text-[#0CB0D8]" />
                             Dados da Entrega
@@ -85,7 +85,7 @@ const RegisterDeliveryPage: React.FC = () => {
 
 
                     {/* Endereço */}
-                    <div className="px-4 sm:px-8 md:px-4 bg-[#1fc3631b] rounded-2xl m-6 mt-8 p-4 border-2 border-[#1FC364]">
+                    <div className="px-4 sm:px-8 md:px-4 bg-[#1fc3631b] rounded-2xl m-6 mt-6 p-4 border-2 border-[#1FC364]">
                         <p className="text-left text-sm sm:text-base text-white font-bold flex items-center">
                             <CiLocationOn className="inline-block mr-2 text-xl text-[#1FC364]" />
                             Endereço
@@ -105,13 +105,13 @@ const RegisterDeliveryPage: React.FC = () => {
                                 CEP: {cep}
                             </p>
                         </div>
-                        <div className="bg-[#1fc364] text-white font-bold h-auto min-h-[1vh] w-fit min-w-[12vw] px-4 py-2 rounded-2xl mt-2 border-2 border-[#1FC364] flex items-center justify-center text-center">
+                        <div className="bg-[#1fc364] text-white font-bold h-auto min-h-[1vh] w-fit min-w-[12vw] px-4 rounded-2xl mt-2 border-2 border-[#1FC364] flex items-center justify-center text-center">
                             Validado no Sistema
                         </div>
                     </div>
 
                     {/* Botão */}
-                    <div className="flex flex-col justify-center px-4 sm:px-6 mb-8">
+                    <div className="flex flex-col justify-center px-4 sm:px-6 mb-6">
                         <Button
                             nome="Confirmar e Continuar"
                             estilo="primary"
