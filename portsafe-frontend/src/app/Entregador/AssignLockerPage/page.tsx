@@ -63,7 +63,7 @@ const AssignLockerPage: React.FC = () => {
                     </div>
 
                     {/* Instruções */}
-                    <div className="bg-[#3389f11a] border-2 border-[#1F9CE4] mr-0 md:mr-16 rounded-2xl w-138 max-w-full  text-center shadow-lg overflow-hidden m-6 mt-0 p-4">
+                    <div className="px-4 sm:px-8 md:px-4 bg-[#3389f11a] rounded-2xl m-6 mt-0 p-4 border-2 border-[#1F9CE4]">
                         <p className="text-left text-sm sm:text-base text-white font-bold pt-3">
                             Instruções:
                         </p>
