@@ -22,7 +22,7 @@ const DeliverySuccessPage: React.FC = () => {
             </div>
 
             {/* Lado direito - Conteúdo */}
-            <div className="flex flex-col justify-center items-center w-full md:w-1/2 px-4 sm:px-6 md:px-10 overflow-y-auto">
+            <div className="flex flex-col justify-center items-center w-full md:w-1/2 px-4 sm:px-6 md:px-10 overflow-y-auto mt-6 mb-6">
                 {/* Card principal */}
                 <div className="bg-[#ffffff18] border-2 border-[#606060] mr-0 md:mr-16 rounded-2xl w-150 max-w-full text-center shadow-lg overflow-hidden">
                     {/* Cabeçalho */}
@@ -127,7 +127,7 @@ const DeliverySuccessPage: React.FC = () => {
                         <Button
                             nome="Registrar Nova Entrega"
                             estilo="transparent"
-                            className="!w-full !bg-[#00000000] text-white text-xs sm:text-sm mt-4 ml-6 mr-6"
+                            className="!w-full !bg-[#00000000] text-white text-xs sm:text-sm mt-4 mb-4 ml-6 mr-6"
                         />
                 </div>
             </div>
