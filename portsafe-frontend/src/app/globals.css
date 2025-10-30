@@ -71,6 +71,13 @@ h1.title {
   background: linear-gradient(to right, #ce5d00ff, #b28407ff); 
 }
 
+.btn-myprofile{ 
+  background: linear-gradient(to right, #328BF1, #F08B10); 
+}
+.btn-myprofile:hover{ 
+  background: linear-gradient(to right, #083F7F, #B56A0F); 
+}
+
 .btn-transparent{
   border: solid #1f9ce4;
 }
@@ -78,7 +85,6 @@ h1.title {
 .btn-transparent:hover{
   border: solid #084571;
 }
-
 
 
 /* === Responsividade === */
