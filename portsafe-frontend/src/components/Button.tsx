@@ -4,6 +4,7 @@ interface IBotao {
   clique?: () => void;
   className?: string;
   icon?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export default function Button({ nome, estilo, clique, className, icon }: IBotao) {
