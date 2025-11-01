@@ -10,6 +10,7 @@ interface InputProps {
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
+  icon?: React.ReactNode;
 }
 
 export default function Input({
@@ -17,7 +18,7 @@ export default function Input({
   type = "text",
   value,
   onChange,
-  className,
+  className
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const inputType =
