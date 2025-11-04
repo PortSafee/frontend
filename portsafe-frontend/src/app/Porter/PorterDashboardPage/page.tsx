@@ -15,7 +15,7 @@ const PorterDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#131826] text-white overflow-x-hidden">
-      <NavBar nome="Carlos Ferreira" funcao="Painel do Porteiro" />
+      <NavBar nome="Carlos Ferreira" funcao="Painel do Porteiro" tipoUsuario="funcionario" />
 
       <div className="flex flex-col lg:flex-row gap-4 p-4 sm:p-6 lg:p-8">
         {/* Botão para mostrar perfil em telas menores */}
@@ -34,6 +34,7 @@ const PorterDashboard: React.FC = () => {
             turno="Manhã - 06:00 às 14:00"
             condominio="Residencial Jardins"
             status="Em serviço"
+            tipoUsuario="funcionario"
           />
         </div>
 
@@ -160,6 +161,7 @@ const PorterDashboard: React.FC = () => {
               turno="Manhã - 06:00 às 14:00"
               condominio="Residencial Jardins"
               status="Em serviço"
+              tipoUsuario="funcionario"
             />
           </div>
         </div>
