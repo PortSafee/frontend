@@ -3,18 +3,28 @@
 import React, { useState } from 'react';
 import { FaUser, FaBuilding } from 'react-icons/fa';
 
-const ToggleButton: React.FC<{ onToggle: (selected: string) => void }> = ({ onToggle }) => {
-  const [selected, setSelected] = useState('Morador');
+interface ToggleButtonProps {
+  onToggle: (selected: string) => void;
+  options?: string[];
+}
+
+const ToggleButton: React.FC<ToggleButtonProps> = ({ onToggle, options: optionLabels }) => {
+  const [selected, setSelected] = useState(optionLabels?.[0] || 'Morador');
 
   const handleToggle = (label: string) => {
     setSelected(label);
     onToggle(label);
   };
 
-  const options = [
-    { label: 'Morador', icon: <FaUser /> },
-    { label: 'Porteiro', icon: <FaBuilding /> },
-  ];
+  const options = optionLabels 
+    ? optionLabels.map(label => ({
+        label,
+        icon: label === 'Morador' ? <FaUser /> : <FaBuilding />
+      }))
+    : [
+        { label: 'Morador', icon: <FaUser /> },
+        { label: 'Porteiro', icon: <FaBuilding /> },
+      ];
 
   return (
     <div className="mt-4 mb-4">
