@@ -24,63 +24,72 @@ const RegisterPage: React.FC = () => {
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validateCpf = (cpf: string) => cpf.replace(/\D/g, '').length === 11;
 
-  const handleRegister = async () => {
-    setError('');
-    setSuccess('');
+const handleRegister = async () => {
+  setError('');
+  setSuccess('');
 
-    if (!validateEmail(email)) {
-      setError('Formato de email inválido. Use @ e .');
-      return;
-    }
-    if (!validateCpf(cpf)) {
-      setError('CPF deve ter 11 dígitos.');
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError('Senhas não coincidem.');
-      return;
-    }
+  if (!validateEmail(email)) {
+    setError('Formato de email inválido. Use @ e .');
+    return;
+  }
+  if (!validateCpf(cpf)) {
+    setError('CPF deve ter 11 dígitos.');
+    return;
+  }
+  if (password !== confirmPassword) {
+    setError('Senhas não coincidem.');
+    return;
+  }
 
-    const endereco = `Condomínio: ${condominio}, Bloco: ${bloco}, Apartamento: ${apartamento}, CPF: ${cpf}`;
+  const endereco = `Condomínio: ${condominio}, Bloco: ${bloco}, Apartamento: ${apartamento}`;
 
-    try {
-      const response = await axios.post(
-        'http://localhost:5128/api/Auth/cadastro',
-        {
-          Email: email,
-          Senha: password,
-          Nome: name,
-          Telefone: phone,
-          Endereco: endereco,
-          Tipo: userType,
-        },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+  // Define o endpoint conforme o tipo de usuário
+  const endpoint =
+    userType === 'Porteiro'
+      ? 'http://localhost:5095/api/Auth/CadastroPorteiro'
+      : 'http://localhost:5095/api/Auth/Cadastro';
 
-      if (response.status === 200) {
-        setSuccess('Cadastro realizado com sucesso!');
-        setName('');
-        setEmail('');
-        setPassword('');
-        setConfirmPassword('');
-        setPhone('');
-        setCpf('');
-        setCondominio('');
-        setBloco('');
-        setApartamento('');
-        setUserType('Morador');
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.Error || 'Erro no registro. Tente novamente!';
-        setError(errorMessage);
-        console.error('Erro:', errorMessage);
-      } else {
-        setError('Erro inesperado. Tente novamente!');
-        console.error('Erro inesperado:', error);
-      }
+  try {
+    const response = await axios.post(
+     endpoint,
+  {
+  Nome: name,
+  Email: email,
+  Senha: password,
+  Telefone: phone,
+  CPF: cpf.replace(/\D/g, ''),
+  CondominioId: 1, // Substitua por valor real (ex: de um select de condomínios)
+  DadosApartamento: { Bloco: bloco, Numero: apartamento } // Ou DadosCasa se aplicável
+},
+  { headers: { 'Content-Type': 'application/json' } }
+);
+
+    if (response.status === 200) {
+      setSuccess(response.data?.Message || 'Cadastro realizado com sucesso!');
+      setName('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
+      setPhone('');
+      setCpf('');
+      setCondominio('');
+      setBloco('');
+      setApartamento('');
+      setUserType('Morador');
     }
-  };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage =
+        error.response?.data?.Message || 'Erro no registro. Tente novamente!';
+      setError(errorMessage);
+      console.error('Erro:', errorMessage);
+    } else {
+      setError('Erro inesperado. Tente novamente!');
+      console.error('Erro inesperado:', error);
+    }
+  }
+};
+
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-[#002236] via-black to-[#002134] relative">
