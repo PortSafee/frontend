@@ -5,8 +5,8 @@ import NavBar from "@/components/NavBar";
 import MyProfile from "@/components/MyProfile";
 import Button from "@/components/Button";
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
-import { FaRegBell, FaUser, FaEye } from "react-icons/fa";
-import { LuPackage, LuPlus } from "react-icons/lu";
+import { FaUser } from "react-icons/fa";
+import { LuPackage } from "react-icons/lu";
 import { FiAlertTriangle, FiBox } from "react-icons/fi";
 import { IoPeople, IoSearchOutline } from "react-icons/io5";
 

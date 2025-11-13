@@ -5,12 +5,12 @@ import ToggleButton from '@/components/ToggleButton';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import IconLogo from '@/assets/icons/icon_logo.png';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
+import Image from 'next/image';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [userType, setUserType] = useState('Morador');
   const [error, setError] = useState('');
 
   //Validação do formato do email
@@ -64,10 +64,10 @@ const LoginPage: React.FC = () => {
             <h1 className="title font-marmelad text-2xl">Bem-vindo de volta</h1>
             <h3>Faça login para ter acesso à sua conta</h3>
           </div>
-          <img src={IconLogo.src} alt="Logo" className="w-[24%] max-w-[120px] min-w-[60px]" />
+          <Image src={IconLogo} alt="Logo" className="w-[24%] max-w-[120px] min-w-[60px]" />
         </div>
 
-        <ToggleButton onToggle={setUserType} />
+        <ToggleButton onToggle={() => {}} />
 
         <div className="px-4 sm:px-10 md:px-20">
           <p className="text-left mt-4 text-lg pl-4">E-mail</p>
@@ -102,7 +102,7 @@ const LoginPage: React.FC = () => {
           <h2 className="text-gray-400 text-sm ">
             Não tem uma conta?
           </h2>
-          <a href="/register" className="text-blue-300 block text-sm mt-0 mb-3 hover:underline">
+          <a href="/General/RegisterPage" className="text-blue-300 block text-sm mt-0 mb-3 hover:underline">
             Cadastre-se aqui
           </a>
         </div>

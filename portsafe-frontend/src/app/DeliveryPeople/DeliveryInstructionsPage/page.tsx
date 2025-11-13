@@ -96,12 +96,12 @@ const DeliveryInstructionsPage: React.FC = () => {
                             <p className="text-left text-sm sm:text-base text-[#83EAAA] font-bold">
                                 Instruções:
                             </p>
-                            <ol className="text-left text-sm sm:text-base text-[#83EAAA] mt-2 list-decimal pl-4">
+                            <ol className="text-left text-sm sm:text-base text-white px-4 space-y-1">
                                 <li className="-mb-2">Localize o armário {armario}</li>
                                 <li className="-mb-2">Abra a porta (já está destrancada)</li>
                                 <li className="-mb-2">Coloque a encomenda dentro</li>
                                 <li className="-mb-2">Feche a porta completamente</li>
-                                <li className="-mb-2">Clique em "Confirmar Depósito"</li>
+                                <li className="-mb-2">Clique em &quot;Confirmar Depósito&quot;</li>
                             </ol>
                         </div>
 

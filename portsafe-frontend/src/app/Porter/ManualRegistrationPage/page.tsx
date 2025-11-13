@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Logo from "@/assets/logo_portsafe.png";
-import { useRouter } from "next/navigation";
 
 const ManualRegisterPage: React.FC = () => {
   const [nomeEntregador, setNomeEntregador] = useState("");
@@ -12,7 +11,6 @@ const ManualRegisterPage: React.FC = () => {
   const [apartamento, setApartamento] = useState("");
   const [telefone, setTelefone] = useState("");
   const [observacoes, setObservacoes] = useState("");
-  const router = useRouter();
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134] overflow-x-hidden">

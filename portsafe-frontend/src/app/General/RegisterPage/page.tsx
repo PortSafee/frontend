@@ -5,7 +5,8 @@ import ToggleButton from '@/components/ToggleButton';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import IconLogo from '@/assets/icons/icon_logo.png';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
+import Image from 'next/image';
 
 const RegisterPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -14,12 +15,37 @@ const RegisterPage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [cpf, setCpf] = useState('');
-  const [condominio, setCondominio] = useState('');
-  const [bloco, setBloco] = useState('');
-  const [apartamento, setApartamento] = useState('');
   const [userType, setUserType] = useState('Morador');
+  const [tipoCondominio, setTipoCondominio] = useState('Apartamento');
+  const [condominioId, setCondominioId] = useState('');
+  const [condominios, setCondominios] = useState<Array<{ id: number; nomeDoCondominio: string; tipo: string }>>([]);
+  
+  // Campos para Apartamento
+  const [bloco, setBloco] = useState('');
+  const [numeroApartamento, setNumeroApartamento] = useState('');
+  
+  // Campos para Casa
+  const [rua, setRua] = useState('');
+  const [numeroCasa, setNumeroCasa] = useState('');
+  const [cep, setCep] = useState('');
+  
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Buscar lista de condomínios ao carregar a página
+  React.useEffect(() => {
+    const fetchCondominios = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/Condominio');
+        console.log('Condomínios carregados:', response.data);
+        console.log('Primeiro condomínio:', response.data[0]);
+        setCondominios(response.data);
+      } catch (error) {
+        console.error('Erro ao buscar condomínios:', error);
+      }
+    };
+    fetchCondominios();
+  }, []);
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validateCpf = (cpf: string) => cpf.replace(/\D/g, '').length === 11;
@@ -32,37 +58,74 @@ const handleRegister = async () => {
     setError('Formato de email inválido. Use @ e .');
     return;
   }
-  if (!validateCpf(cpf)) {
+  
+  // CPF é obrigatório apenas para Morador
+  if (userType !== 'Porteiro' && !validateCpf(cpf)) {
     setError('CPF deve ter 11 dígitos.');
     return;
   }
+  
   if (password !== confirmPassword) {
     setError('Senhas não coincidem.');
     return;
   }
-
-  const endereco = `Condomínio: ${condominio}, Bloco: ${bloco}, Apartamento: ${apartamento}`;
+  if (!condominioId) {
+    setError('Selecione um condomínio.');
+    return;
+  }
 
   // Define o endpoint conforme o tipo de usuário
   const endpoint =
     userType === 'Porteiro'
-      ? 'http://localhost:5095/api/Auth/CadastroPorteiro'
-      : 'http://localhost:5095/api/Auth/Cadastro';
+      ? 'http://localhost:5000/api/Auth/CadastroPorteiro'
+      : 'http://localhost:5000/api/Auth/Cadastro';
+
+  // Monta os dados conforme o tipo de usuário
+  let requestData: Record<string, string | number | object>;
+  
+  if (userType === 'Porteiro') {
+    // Dados simplificados para Porteiro
+    requestData = {
+      nome: name,
+      email: email,
+      senha: password,
+      telefone: phone,
+      condominioId: parseInt(condominioId)
+    };
+  } else {
+    // Dados completos para Morador
+    requestData = {
+      Nome: name,
+      Email: email,
+      Senha: password,
+      Telefone: phone,
+      CPF: cpf.replace(/\D/g, ''),
+      CondominioId: parseInt(condominioId),
+    };
+
+    if (tipoCondominio === 'Apartamento') {
+      requestData.DadosApartamento = {
+        TipoUnidade: 'Apartamento',
+        Bloco: bloco,
+        NumeroApartamento: numeroApartamento
+      };
+    } else {
+      requestData.DadosCasa = {
+        TipoUnidade: 'Casa',
+        Rua: rua,
+        NumeroCasa: numeroCasa,
+        CEP: cep.replace(/\D/g, '')
+      };
+    }
+  }
 
   try {
+    console.log('Dados enviados:', requestData); // Debug
     const response = await axios.post(
-     endpoint,
-  {
-  Nome: name,
-  Email: email,
-  Senha: password,
-  Telefone: phone,
-  CPF: cpf.replace(/\D/g, ''),
-  CondominioId: 1, // Substitua por valor real (ex: de um select de condomínios)
-  DadosApartamento: { Bloco: bloco, Numero: apartamento } // Ou DadosCasa se aplicável
-},
-  { headers: { 'Content-Type': 'application/json' } }
-);
+      endpoint,
+      requestData,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
 
     if (response.status === 200) {
       setSuccess(response.data?.Message || 'Cadastro realizado com sucesso!');
@@ -72,15 +135,19 @@ const handleRegister = async () => {
       setConfirmPassword('');
       setPhone('');
       setCpf('');
-      setCondominio('');
       setBloco('');
-      setApartamento('');
+      setNumeroApartamento('');
+      setRua('');
+      setNumeroCasa('');
+      setCep('');
       setUserType('Morador');
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
+      console.log('Erro completo:', error.response?.data); // Debug detalhado
+      console.log('Status:', error.response?.status);
       const errorMessage =
-        error.response?.data?.Message || 'Erro no registro. Tente novamente!';
+        error.response?.data?.Message || error.response?.data?.message || 'Erro no registro. Tente novamente!';
       setError(errorMessage);
       console.error('Erro:', errorMessage);
     } else {
@@ -115,10 +182,36 @@ const handleRegister = async () => {
             <h1 className="title font-marmelad text-2xl">Criar Nova Conta</h1>
             <h3>Escolha seu tipo de usuário e complete o cadastro</h3>
           </div>
-          <img src={IconLogo.src} alt="Logo" className="w-[24%] max-w-[120px] min-w-[60px]" />
+          <Image src={IconLogo} alt="Logo" className="w-[24%] max-w-[120px] min-w-[60px]" />
         </div>
 
         <ToggleButton onToggle={setUserType} options={['Morador', 'Porteiro']} />
+
+        {/* Select de Condomínio */}
+        <div className="px-4 sm:px-10 md:px-20 mt-4">
+          <p className="text-left text-lg pl-4 mb-2">Condomínio</p>
+          <select
+            value={condominioId}
+            onChange={(e) => setCondominioId(e.target.value)}
+            className="w-full h-10 pl-4 pr-4 bg-[#1E2432] text-white border border-[#606060] rounded-lg focus:outline-none focus:border-blue-500 appearance-none cursor-pointer"
+            style={{ backgroundImage: 'none' }}
+          >
+            <option value="" className="bg-[#1E2432] text-gray-400">Selecione um condomínio</option>
+            {condominios.map((cond) => (
+              <option key={cond.id} value={cond.id} className="bg-[#1E2432] text-white">
+                {cond.nomeDoCondominio} ({cond.tipo})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Toggle para tipo de condomínio - apenas para Morador */}
+        {userType !== 'Porteiro' && (
+          <div className="px-4 sm:px-10 md:px-20 mt-4">
+            <p className="text-left text-lg pl-4 mb-2">Tipo de Residência</p>
+            <ToggleButton onToggle={setTipoCondominio} options={['Apartamento', 'Casa']} />
+          </div>
+        )}
 
         {/* Campos */}
         <div className="px-4 sm:px-10 md:px-20 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -150,14 +243,31 @@ const handleRegister = async () => {
               className="w-full h-10 pl-4"
             />
 
-            <p className="text-left mt-4 text-lg pl-4">Bloco</p>
-            <Input
-              placeholder="Bloco A, B, C..."
-              type="text"
-              value={bloco}
-              onChange={(e) => setBloco(e.target.value)}
-              className="w-full h-10 pl-4"
-            />
+            {userType !== 'Porteiro' && (
+              tipoCondominio === 'Apartamento' ? (
+                <>
+                  <p className="text-left mt-4 text-lg pl-4">Bloco</p>
+                  <Input
+                    placeholder="Bloco A, B, C..."
+                    type="text"
+                    value={bloco}
+                    onChange={(e) => setBloco(e.target.value)}
+                    className="w-full h-10 pl-4"
+                  />
+                </>
+              ) : (
+                <>
+                  <p className="text-left mt-4 text-lg pl-4">Rua</p>
+                  <Input
+                    placeholder="Ex: Rua das Flores"
+                    type="text"
+                    value={rua}
+                    onChange={(e) => setRua(e.target.value)}
+                    className="w-full h-10 pl-4"
+                  />
+                </>
+              )
+            )}
           </div>
 
           <div>
@@ -179,37 +289,64 @@ const handleRegister = async () => {
               className="w-full h-10 pl-4"
             />
 
-            <p className="text-left mt-4 text-lg pl-4">CPF</p>
-            <Input
-              placeholder="123.456.789-01"
-              type="text"
-              value={cpf}
-              onChange={(e) => setCpf(e.target.value)}
-              className="w-full h-10 pl-4"
-            />
+            {userType !== 'Porteiro' && (
+              <>
+                <p className="text-left mt-4 text-lg pl-4">CPF</p>
+                <Input
+                  placeholder="123.456.789-01"
+                  type="text"
+                  value={cpf}
+                  onChange={(e) => setCpf(e.target.value)}
+                  className="w-full h-10 pl-4"
+                />
 
-            <p className="text-left mt-4 text-lg pl-4">Apartamento</p>
-            <Input
-              placeholder="Apt 8"
-              type="text"
-              value={apartamento}
-              onChange={(e) => setApartamento(e.target.value)}
-              className="w-full h-10 pl-4"
-            />
+                {tipoCondominio === 'Apartamento' ? (
+                  <>
+                    <p className="text-left mt-4 text-lg pl-4">Apartamento</p>
+                    <Input
+                      placeholder="Apt 101"
+                      type="text"
+                      value={numeroApartamento}
+                      onChange={(e) => setNumeroApartamento(e.target.value)}
+                      className="w-full h-10 pl-4"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <p className="text-left mt-4 text-lg pl-4">Número da Casa</p>
+                    <Input
+                      placeholder="Ex: 123"
+                      type="text"
+                      value={numeroCasa}
+                      onChange={(e) => setNumeroCasa(e.target.value)}
+                      className="w-full h-10 pl-4"
+                    />
+                    <p className="text-left mt-4 text-lg pl-4">CEP</p>
+                    <Input
+                      placeholder="12345-678"
+                      type="text"
+                      value={cep}
+                      onChange={(e) => setCep(e.target.value)}
+                      className="w-full h-10 pl-4"
+                    />
+                  </>
+                )}
+              </>
+            )}
           </div>
         </div>
 
         <Button
-                nome="Entrar"
+                nome="Cadastrar "
                 estilo="primary"
                 clique={handleRegister}
-                className='mt-3 mb-3'
+                className='mt-6 mb-3'
               />
 
-        <h2 className="text-gray-400 text-sm ">
+        <h2 className="text-gray-400 text-sm mb-3 ">
           Já tem uma conta?
         </h2>
-        <a href="/login" className="text-blue-300 block text-sm mt-0 mb-3 hover:underline">
+        <a href="/General/LoginPage" className="text-blue-300 block text-sm mt-0 mb-3 hover:underline">
           Faça login aqui!
         </a>
       </div>
