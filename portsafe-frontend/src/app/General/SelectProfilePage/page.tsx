@@ -18,6 +18,7 @@ const SelectProfilePage: React.FC = () => {
         router.push(path);
     };
 
+
     return (
         <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-r from-[#002236] via-black to-[#002134] text-white relative px-4">
             {/* Logo e título */}
@@ -116,7 +117,7 @@ const SelectProfilePage: React.FC = () => {
                     <Button
                         nome="Acessar"
                         estilo="entregador"
-                        clique={() => handleRedirect("#")}
+                        clique={() => handleRedirect("/DeliveryPeople/RegisterDeliveryPage")}
                         className="!w-full"
                         icon={<VscArrowCircleRight className="text-xl sm:text-2xl" />}
                     />
