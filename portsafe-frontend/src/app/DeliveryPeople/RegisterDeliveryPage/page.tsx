@@ -46,8 +46,7 @@ const RegisterDeliveryPage: React.FC = () => {
           <div className="bg-[#ffffff18] border-2 border-[#606060] mr-0 md:mr-16 rounded-2xl w-150 max-w-full text-center shadow-lg overflow-hidden p-4">
             {/* Cabeçalho */}
             <div className="flex flex-col items-center justify-center text-white">
-              <div className="bg-[#007BFF] rounded-md p-2 text-white text-2xl font-bold mb-2">C</div>
-              <h1 className="title font-marmelad !text-2xl sm:!text-3xl mb-1">
+              <h1 className="title font-marmelad !text-2xl sm:!text-3xl mb-1 mt-4">
                 Validando Endereço...
               </h1>
               <h3 className="text-sm sm:text-base opacity-90">
@@ -246,7 +245,7 @@ const RegisterDeliveryPage: React.FC = () => {
               clique={() => {
                 setLoading(true);
                 setTimeout(() => {
-                  router.push("/confirmacao");
+                  router.push("/DeliveryPeople/AddressConfirmationPage");
                 }, 2000);
               }}
             />

@@ -3,11 +3,18 @@
 import React, { useState, useEffect } from "react";
 import Logo from "@/assets/logo_portsafe.png";
 import Button from "@/components/Button";
+import { useRouter } from "next/navigation";
 
 // Exemplo com valor temporário
 const armario = "015";
 
 const DeliveryInstructionsPage: React.FC = () => {
+     const router = useRouter();
+    
+        const handleRedirect = (path: string) => {
+            router.push(path);
+        }; 
+
     const [timeLeft, setTimeLeft] = useState(120);
     const [showModal, setShowModal] = useState(false);
 
@@ -119,6 +126,7 @@ const DeliveryInstructionsPage: React.FC = () => {
                                 nome="Confirmar Depósito"
                                 estilo="primary"
                                 className="!w-133 max-w-full text-white text-xs sm:text-sm md:text-base"
+                                  clique={() => handleRedirect("/DeliveryPeople/DeliverySuccessPage")}
                             />
                         </div>
                     </div>
