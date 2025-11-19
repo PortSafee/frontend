@@ -5,20 +5,21 @@ import Button from '@/components/Button';
 import Input from '@/components/Input';
 import IconLogo from '@/assets/icons/icon_logo.png';
 import axios from 'axios';
+import { useRouter } from 'next/navigation'; // <-- IMPORTANTE
 
 const ResetPassword: React.FC = () => {
+  const router = useRouter(); // <-- AQUI
+
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleResetPassword = async () => {
-    // Validação: senhas iguais
     if (password !== confirmPassword) {
       setError('As senhas não coincidem.');
       return;
     }
 
-    // Validação: tamanho mínimo
     if (password.length < 6) {
       setError('A senha deve ter pelo menos 6 caracteres.');
       return;
@@ -33,12 +34,14 @@ const ResetPassword: React.FC = () => {
 
       console.log('Senha redefinida com sucesso:', response.data);
       setError('');
+
+      router.push("/General/LoginPage"); // <-- REDIRECIONA AQUI APÓS O SUCESSO
+      
     } catch (error) {
       console.error('Erro ao redefinir senha:', error);
       setError('Erro ao redefinir a senha. Tente novamente.');
     }
   };
-
     return (
         <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-[#002236] via-black to-[#002134] relative">
 
