@@ -152,7 +152,7 @@ const LoginPage: React.FC = () => {
             className="w-full h-10 pl-4"
           />
 
-          <a href="/General/ResetPassword" className="block text-left text-sm pl-4 mt-3 hover:underline">
+          <a href="/General/ForgotPasswordPage" className="block text-left text-sm pl-4 mt-3 hover:underline">
             Esqueceu a senha?
           </a>
 
