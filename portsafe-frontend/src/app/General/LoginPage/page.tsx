@@ -100,25 +100,14 @@ const LoginPage: React.FC = () => {
 
       // agora redireciona
       if (ehMorador) {
-        router.push("/ResidentDashboardPage");
+        router.push("/Resident/ResidentDashboardPage");
       } else {
-        router.push("/PorterDashboardPage");
+        router.push("/Porter/PorterDashboardPage");
       }
 
     } catch (error) {
       console.error("Erro no login:", error);
-
-      // tratamento seguro baseado no toggle
-      if (axios.isAxiosError(error)) {
-        if (selectedType === "porteiro") {
-          // backend NÃO suporta login de porteiro
-          setError("Este acesso não está disponível para porteiros no momento.");
-        } else {
-          setError("Email ou senha inválidos.");
-        }
-      } else {
-        setError("Erro inesperado. Tente novamente.");
-      }
+      setError("Email ou senha inválidos.");
     }
   };
 
