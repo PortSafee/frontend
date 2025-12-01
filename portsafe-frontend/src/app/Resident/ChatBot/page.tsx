@@ -34,7 +34,7 @@ const ChatBot: React.FC = () => {
 
         try {
             // Envia a mensagem para a API
-            const response = await axios.post('http://localhost:5000/api/Chatbot/perguntar', {
+            const response = await axios.post('/api/Chatbot/perguntar', {
                 mensagem: userMessage,
             }, {
                 headers: { 'Content-Type': 'application/json' },
