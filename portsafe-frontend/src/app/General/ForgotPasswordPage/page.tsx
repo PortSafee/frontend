@@ -26,7 +26,7 @@ const ForgotPasswordPage: React.FC = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:5095/api/Auth/SolicitarResetSenha',
+        '/api/Auth/SolicitarResetSenha',
         { Email: email },
         { headers: { 'Content-Type': 'application/json' } }
       );

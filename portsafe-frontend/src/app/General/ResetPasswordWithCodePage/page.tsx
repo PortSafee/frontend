@@ -39,7 +39,7 @@ const ResetPasswordWithCode: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5095/api/Auth/RedefinirSenha', {
+      const response = await axios.post('/api/Auth/RedefinirSenha', {
         Email: email,
         Token: code,
         NovaSenha: password,

@@ -72,7 +72,7 @@ const LoginPage: React.FC = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:5095/api/Auth/Login',
+        '/api/Auth/Login',
         { UsernameOrEmail: email, Password: password },
         { headers: { 'Content-Type': 'application/json' } }
       );

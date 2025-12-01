@@ -36,12 +36,15 @@ const RegisterPage: React.FC = () => {
   React.useEffect(() => {
     const fetchCondominios = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/Condominio');
+        const response = await axios.get('/api/Condominio');
         console.log('Condomínios carregados:', response.data);
         console.log('Primeiro condomínio:', response.data[0]);
         setCondominios(response.data);
       } catch (error) {
         console.error('Erro ao buscar condomínios:', error);
+        if (axios.isAxiosError(error) && error.response?.status === 500) {
+          setError('Erro no servidor. Verifique se o banco de dados está configurado corretamente.');
+        }
       }
     };
     fetchCondominios();
@@ -74,11 +77,26 @@ const handleRegister = async () => {
     return;
   }
 
+  // Validação específica para Morador
+  if (userType !== 'Porteiro') {
+    if (tipoCondominio === 'Apartamento') {
+      if (!bloco || !numeroApartamento) {
+        setError('Preencha o Bloco e o número do Apartamento.');
+        return;
+      }
+    } else {
+      if (!rua || !numeroCasa || !cep) {
+        setError('Preencha a Rua, número da Casa e CEP.');
+        return;
+      }
+    }
+  }
+
   // Define o endpoint conforme o tipo de usuário
   const endpoint =
     userType === 'Porteiro'
-      ? 'http://localhost:5000/api/Auth/CadastroPorteiro'
-      : 'http://localhost:5000/api/Auth/Cadastro';
+      ? '/api/Auth/CadastroPorteiro'
+      : '/api/Auth/Cadastro';
 
   // Monta os dados conforme o tipo de usuário
   let requestData: Record<string, string | number | object>;
