@@ -7,11 +7,40 @@ import Logo from "@/assets/logo_portsafe.png";
 import { useRouter } from "next/navigation";
 import { BsPeople } from "react-icons/bs";
 
+/*Definir Interfaces TypeScript para Payload e Resposta*/
+interface ValidarDestinatarioRequest {
+  NomeDestinatario: string;
+  CEP: string;
+  Numero?: string; // Usa apartamento como número da unidade
+}
+
+interface ValidacaoDestinatarioResponse {
+  Validado: boolean;
+  Mensagem: string;
+  TipoResultado: 'Sucesso' | 'DivergenciaNome' | 'DivergenciaCEP' | 'NaoEncontrado' | 'MultiplasCombinacoes';
+  DadosEncontrados?: {
+    NomeMorador?: string;
+    TelefoneWhatsApp?: string;
+    TipoUnidade?: string;
+    Endereco?: string;
+    CEP?: string;
+    UnidadeId: number;
+    MoradorId: number;
+  };
+  PodeRetentar: boolean;
+  PodeAcionarPortaria: boolean;
+  TokenValidacao?: string;
+  ValidacaoId?: number;
+}
+
 const RegisterDeliveryPage: React.FC = () => {
   const [tipoEntrega, setTipoEntrega] = useState<string>("");
   const [destinatario, setDestinatario] = useState("");
   const [apartamento, setApartamento] = useState("");
+  const [cep, setCep] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const router = useRouter();
 
   if (loading) {
@@ -146,6 +175,21 @@ const RegisterDeliveryPage: React.FC = () => {
               onChange={(e) => setDestinatario(e.target.value)}
             />
             <p className="text-left mt-4 text-sm sm:text-base pl-3 text-white">
+              CEP do Condomínio
+            </p>
+            <Input
+              placeholder="Digite o CEP"
+              value={cep}
+              onChange={(e) => {
+                let value = e.target.value.replace(/\D/g, ''); // Remove não-dígitos
+                if (value.length > 5) {
+                  value = `${value.slice(0, 5)}-${value.slice(5)}`;
+                }
+                setCep(value.slice(0, 9)); // Limita a 9 chars (XXXXX-XXX)
+              }}
+              className="!w-135 max-w-full h-8 pl-4"
+            />
+            <p className="text-left mt-4 text-sm sm:text-base pl-3 text-white">
               Número da Casa / Apartamento
             </p>
             <Input
@@ -166,11 +210,10 @@ const RegisterDeliveryPage: React.FC = () => {
             {/* Entrega Padrão */}
             <div
               onClick={() => setTipoEntrega("Padrão")}
-              className={`cursor-pointer p-3 sm:p-4 md:p-5 rounded-xl border w-full sm:w-auto max-w-[240px] mx-auto ${
-                tipoEntrega === "Padrão"
-                  ? "border-[#0CB0D8] bg-[#ffffff26]"
-                  : "border-transparent bg-[#ffffff26]"
-              } hover:bg-[#01384D]/70 transition`}
+              className={`cursor-pointer p-3 sm:p-4 md:p-5 rounded-xl border w-full sm:w-auto max-w-[240px] mx-auto ${tipoEntrega === "Padrão"
+                ? "border-[#0CB0D8] bg-[#ffffff26]"
+                : "border-transparent bg-[#ffffff26]"
+                } hover:bg-[#01384D]/70 transition`}
             >
               <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 bg-[#00E096] rounded-full mx-auto mb-2 sm:mb-3"></div>
               <p className="text-gray-100 text-sm sm:text-base md:text-lg font-bold text-center">
@@ -184,11 +227,10 @@ const RegisterDeliveryPage: React.FC = () => {
             {/* Entrega Perecível */}
             <div
               onClick={() => setTipoEntrega("Perecível")}
-              className={`cursor-pointer p-3 sm:p-4 md:p-5 rounded-xl border w-full sm:w-auto max-w-[240px] mx-auto ${
-                tipoEntrega === "Perecível"
-                  ? "border-[#0CB0D8] bg-[#ffffff26]"
-                  : "border-transparent bg-[#ffffff26]"
-              } hover:bg-[#01384D]/70 transition`}
+              className={`cursor-pointer p-3 sm:p-4 md:p-5 rounded-xl border w-full sm:w-auto max-w-[240px] mx-auto ${tipoEntrega === "Perecível"
+                ? "border-[#0CB0D8] bg-[#ffffff26]"
+                : "border-transparent bg-[#ffffff26]"
+                } hover:bg-[#01384D]/70 transition`}
             >
               <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 bg-[#0CB0D8] rounded-full mx-auto mb-2 sm:mb-3"></div>
               <p className="text-gray-100 text-sm sm:text-base md:text-lg font-bold text-center">
@@ -202,11 +244,10 @@ const RegisterDeliveryPage: React.FC = () => {
             {/* Entrega Volumosa */}
             <div
               onClick={() => setTipoEntrega("Volumosa")}
-              className={`cursor-pointer p-3 sm:p-4 md:p-5 rounded-xl border w-full sm:w-auto max-w-[240px] mx-auto ${
-                tipoEntrega === "Volumosa"
-                  ? "border-[#0CB0D8] bg-[#ffffff26]"
-                  : "border-transparent bg-[#ffffff26]"
-              } hover:bg-[#01384D]/70 transition`}
+              className={`cursor-pointer p-3 sm:p-4 md:p-5 rounded-xl border w-full sm:w-auto max-w-[240px] mx-auto ${tipoEntrega === "Volumosa"
+                ? "border-[#0CB0D8] bg-[#ffffff26]"
+                : "border-transparent bg-[#ffffff26]"
+                } hover:bg-[#01384D]/70 transition`}
             >
               <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 bg-[#F77B14] rounded-full mx-auto mb-2 sm:mb-3"></div>
               <p className="text-gray-100 text-sm sm:text-base md:text-lg font-bold text-center">
@@ -225,15 +266,21 @@ const RegisterDeliveryPage: React.FC = () => {
                 <div className="bg-gradient-to-r from-[#000000] to-[#061f34] rounded-xl p-6 w-[35vw] text-center">
                   <h3 className="title font-marmelad !text-3xl font-bold text-[#E9D9AE] mt-4 mb-4">Atenção!</h3>
                   <p className="text-gray-300 text-xl mb-6">Para esse tipo de encomenda é necessário se dirigir à portaria!</p>
-                  <Button 
-                    nome="Entendi" 
-                    estilo="secundary" 
+                  <Button
+                    nome="Entendi"
+                    estilo="secundary"
                     className="w-full text-white"
-                    clique={() => setTipoEntrega("")} 
+                    clique={() => setTipoEntrega("")}
                   />
                 </div>
               </div>
             </>
+          )}
+          {errorMessage && (
+            <p className="text-red-500 text-sm mt-2 mb-4 text-center">{errorMessage}</p>
+          )}
+          {successMessage && (
+            <p className="text-green-500 text-sm mt-2 mb-4 text-center">{successMessage}</p>
           )}
 
           {/* Botão */}
@@ -243,6 +290,14 @@ const RegisterDeliveryPage: React.FC = () => {
               estilo="primary"
               className="!w-133 max-w-full text-white text-xs sm:text-sm md:text-base"
               clique={() => {
+                if (!destinatario.trim() || !apartamento.trim() || !cep.trim() || !tipoEntrega) {
+                  alert("Preencha todos os campos: Destinatário, Apartamento/Unidade, CEP e selecione o Tipo de Entrega.");
+                  return;
+                }
+                if (cep.replace(/\D/g, '').length !== 8) { // Remove não-dígitos e verifica 8 chars (CEP brasileiro)
+                  alert("CEP inválido. Deve ter 8 dígitos (ex.: 12345678 ou 12345-678).");
+                  return;
+                }
                 setLoading(true);
                 setTimeout(() => {
                   router.push("/DeliveryPeople/AddressConfirmationPage");
