@@ -49,6 +49,8 @@ const RegisterDeliveryPage: React.FC = () => {
   const [tipoEntrega, setTipoEntrega] = useState("");
   const [destinatario, setDestinatario] = useState("");
   const [apartamento, setApartamento] = useState("");
+  const [torre, setTorre] = useState(""); 
+  const [numero, setNumero] = useState("");   
   const [cep, setCep] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -71,10 +73,13 @@ const RegisterDeliveryPage: React.FC = () => {
       return;
     }
 
-    if (tipoUnidade === "Apartamento" && !apartamento.trim()) {
-      setErrorMessage("Digite o número do apartamento.");
-      return;
-    }
+    if (tipoUnidade === "Apartamento") {
+  if (!torre.trim() || !numero.trim()) {
+    setErrorMessage("Digite Torre/Bloco e Número do Apartamento.");
+    return;
+  }
+}
+
 
     if (!tipoEntrega) {
       setErrorMessage("Selecione o Tipo de Entrega.");
@@ -99,7 +104,7 @@ const RegisterDeliveryPage: React.FC = () => {
   NomeDestinatario: destinatario,
   TipoUnidade: tipoUnidade,   
   ...(tipoUnidade === "Casa" ? { CEP: cepLimpo } : {}),
-  ...(tipoUnidade === "Apartamento" ? { Numero: apartamento } : {}),
+  ...(tipoUnidade === "Apartamento" ? { Torre: torre, Numero: numero } : {}),
 };
 
       const backendUrl =
@@ -308,16 +313,25 @@ const RegisterDeliveryPage: React.FC = () => {
 
             {/* APTO (APARTAMENTO) */}
             {tipoUnidade === "Apartamento" && (
-              <>
-                <p className="text-left mt-4 text-white">Número do Apto/Bloco</p>
-                <Input
-                  placeholder="Ex: Bloco A - Apt 804"
-                  value={apartamento}
-                  onChange={(e) => setApartamento(e.target.value)}
-                  className="!w-full h-8 pl-4"
-                />
-              </>
-            )}
+  <>
+    <p className="text-left mt-4 text-white">Torre / Bloco</p>
+    <Input
+      placeholder="Ex: Bloco A"
+      value={torre}
+      onChange={(e) => setTorre(e.target.value)}
+      className="!w-full h-8 pl-4"
+    />
+
+    <p className="text-left mt-4 text-white">Número do Apartamento</p>
+    <Input
+      placeholder="Ex: 804"
+      value={numero}
+      onChange={(e) => setNumero(e.target.value)}
+      className="!w-full h-8 pl-4"
+    />
+  </>
+)}
+
           </div>
 
           {/* Tipo de Entrega */}
