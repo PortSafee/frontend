@@ -120,35 +120,31 @@ const RegisterDeliveryPage: React.FC = () => {
 
       const data = response.data;
 
-      if (data.validado) {
-        setSuccessMessage(data.mensagem || "Destinatário validado!");
+     if (data.validado) {
+        setSuccessMessage(data.mensagem);
 
-        if (data.tokenValidacao)
-          localStorage.setItem("tokenValidacao", data.tokenValidacao);
+        // Armazene os dados validados no localStorage para a próxima página
+        if (data.dadosEncontrados) {
+          localStorage.setItem("validatedDeliveryData", JSON.stringify(data.dadosEncontrados));
+        }
 
-        if (data.validacaoId)
-          localStorage.setItem("validacaoId", data.validacaoId.toString());
-
+        // Redirecione para a página de confirmação
         setTimeout(() => {
           router.push("/DeliveryPeople/AddressConfirmationPage");
-        }, 1500);
+        }, 1000);
       } else {
-        setErrorMessage(data.mensagem || "Erro na validação.");
+        setErrorMessage(data.mensagem);
         setPodeRetentar(data.podeRetentar);
         setPodeAcionarPortaria(data.podeAcionarPortaria);
       }
     } catch (error: any) {
-      let msg = "Erro ao conectar ao servidor.";
-
-      if (error.response) msg = error.response.data?.mensagem || msg;
-
-      setErrorMessage(msg);
-      setPodeRetentar(true);
-      setPodeAcionarPortaria(true);
+      console.error("Erro na validação:", error);
+      setErrorMessage(error.response?.data?.message || "Erro ao validar destinatário. Tente novamente.");
     } finally {
       setLoading(false);
     }
   };
+  
   if (loading) {
     return (
       <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134] overflow-x-hidden">
