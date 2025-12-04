@@ -6,44 +6,145 @@ import Input from "@/components/Input";
 import Logo from "@/assets/logo_portsafe.png";
 import { useRouter } from "next/navigation";
 import { BsPeople } from "react-icons/bs";
+import axios from "axios";
 
 /*Definir Interfaces TypeScript para Payload e Resposta*/
 interface ValidarDestinatarioRequest {
   NomeDestinatario: string;
-  CEP: string;
-  Numero?: string; // Usa apartamento como número da unidade
+  TipoUnidade: string; 
+  CEP?: string;
+  Torre?: string;
+  Numero?: string;
 }
 
 interface ValidacaoDestinatarioResponse {
-  Validado: boolean;
-  Mensagem: string;
-  TipoResultado: 'Sucesso' | 'DivergenciaNome' | 'DivergenciaCEP' | 'NaoEncontrado' | 'MultiplasCombinacoes';
-  DadosEncontrados?: {
-    NomeMorador?: string;
-    TelefoneWhatsApp?: string;
-    TipoUnidade?: string;
-    Endereco?: string;
-    CEP?: string;
-    UnidadeId: number;
-    MoradorId: number;
+  validado: boolean;
+  mensagem: string;
+  tipoResultado:
+    | "Sucesso"
+    | "DivergenciaNome"
+    | "DivergenciaCEP"
+    | "NaoEncontrado"
+    | "MultiplasCombinacoes";
+
+  dadosEncontrados?: {
+    nomeMorador?: string;
+    telefoneWhatsApp?: string;
+    tipoUnidade?: string;
+    endereco?: string;
+    cep?: string;
+    unidadeId: number;
+    moradorId: number;
   };
-  PodeRetentar: boolean;
-  PodeAcionarPortaria: boolean;
-  TokenValidacao?: string;
-  ValidacaoId?: number;
+
+  podeRetentar: boolean;
+  podeAcionarPortaria: boolean;
+  tokenValidacao?: string;
+  validacaoId?: number;
 }
 
+
 const RegisterDeliveryPage: React.FC = () => {
-  const [tipoEntrega, setTipoEntrega] = useState<string>("");
+  const [tipoUnidade, setTipoUnidade] = useState(""); // ← CASA | APARTAMENTO
+  const [tipoEntrega, setTipoEntrega] = useState("");
   const [destinatario, setDestinatario] = useState("");
   const [apartamento, setApartamento] = useState("");
   const [cep, setCep] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [podeRetentar, setPodeRetentar] = useState(false);
+  const [podeAcionarPortaria, setPodeAcionarPortaria] = useState(false);
   const router = useRouter();
 
-  if (loading) {
+
+
+  const onSubmit = async () => {
+    // Valida campos obrigatórios conforme tipo selecionado
+    if (!destinatario.trim() || !tipoUnidade) {
+      setErrorMessage("Preencha o nome e selecione Casa ou Apartamento.");
+      return;
+    }
+
+    if (tipoUnidade === "Casa" && !cep.trim()) {
+      setErrorMessage("Digite o CEP da Casa.");
+      return;
+    }
+
+    if (tipoUnidade === "Apartamento" && !apartamento.trim()) {
+      setErrorMessage("Digite o número do apartamento.");
+      return;
+    }
+
+    if (!tipoEntrega) {
+      setErrorMessage("Selecione o Tipo de Entrega.");
+      return;
+    }
+
+    const cepLimpo = cep.replace(/\D/g, "");
+    if (tipoUnidade === "Casa" && cepLimpo.length !== 8) {
+      setErrorMessage("CEP inválido. Deve ter 8 dígitos.");
+      return;
+    }
+
+
+    setLoading(true);
+    setErrorMessage("");
+    setSuccessMessage("");
+    setPodeRetentar(false);
+    setPodeAcionarPortaria(false);
+
+    try {
+      const requestData: ValidarDestinatarioRequest = {
+  NomeDestinatario: destinatario,
+  TipoUnidade: tipoUnidade,   
+  ...(tipoUnidade === "Casa" ? { CEP: cepLimpo } : {}),
+  ...(tipoUnidade === "Apartamento" ? { Numero: apartamento } : {}),
+};
+
+      const backendUrl =
+        process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5095";
+
+      const response = await axios.post<ValidacaoDestinatarioResponse>(
+        `${backendUrl}/api/Entrega/ValidarDestinatario`,
+        requestData,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const data = response.data;
+
+      if (data.validado) {
+  setSuccessMessage(data.mensagem || "Destinatário validado!");
+
+  if (data.tokenValidacao)
+    localStorage.setItem("tokenValidacao", data.tokenValidacao);
+
+  if (data.validacaoId)
+    localStorage.setItem("validacaoId", data.validacaoId.toString());
+
+  setTimeout(() => {
+    router.push("/DeliveryPeople/AddressConfirmationPage");
+  }, 1500);
+} else {
+  setErrorMessage(data.mensagem || "Erro na validação.");
+  setPodeRetentar(data.podeRetentar);
+  setPodeAcionarPortaria(data.podeAcionarPortaria);
+}
+} catch (error: any) {
+  let msg = "Erro ao conectar ao servidor.";
+
+  if (error.response) msg = error.response.data?.mensagem || msg;
+
+  setErrorMessage(msg);
+  setPodeRetentar(true);
+  setPodeAcionarPortaria(true);
+} finally {
+  setLoading(false);
+}
+  };
+    if (loading) {
     return (
       <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134] overflow-x-hidden">
         {/* Lado esquerdo - Logo e nome */}
@@ -57,7 +158,6 @@ const RegisterDeliveryPage: React.FC = () => {
             Sistema de Entregas do Condomínio
           </p>
         </div>
-
         {/* Lado direito - Carregamento */}
         <div className="flex flex-col justify-center items-center w-full md:w-1/2 px-4 sm:px-6 md:px-10 overflow-y-auto">
           {/* Barra de progresso */}
@@ -70,7 +170,6 @@ const RegisterDeliveryPage: React.FC = () => {
               <div className="h-3 bg-gradient-to-r from-[#00C2FF] to-[#007BFF] rounded-full w-1/2"></div>
             </div>
           </div>
-
           {/* Card de carregamento */}
           <div className="bg-[#ffffff18] border-2 border-[#606060] mr-0 md:mr-16 rounded-2xl w-150 max-w-full text-center shadow-lg overflow-hidden p-4">
             {/* Cabeçalho */}
@@ -82,14 +181,12 @@ const RegisterDeliveryPage: React.FC = () => {
                 Verificando dados no sistema..
               </h3>
             </div>
-
             {/* Dados da Entrega */}
             <div className="px-4 sm:px-8 md:px-4 bg-[#ffffff18] rounded-2xl m-6 mt-6 p-4 border-2 border-[#606060]">
               <p className="text-left text-sm sm:text-base text-white font-bold flex items-center">
                 <BsPeople className="inline-block mr-2 text-xl text-[#0CB0D8]" />
                 Dados da Entrega
               </p>
-
               {/* Linha 1 - Destinatário */}
               <div className="flex justify-between items-center mt-4">
                 <p className="text-sm sm:text-base font-thin text-white">
@@ -99,7 +196,6 @@ const RegisterDeliveryPage: React.FC = () => {
                   {destinatario || "João Silva"}
                 </p>
               </div>
-
               {/* Linha 2 - Apartamento */}
               <div className="flex justify-between items-center mt-2">
                 <p className="text-sm sm:text-base font-thin text-white">
@@ -110,7 +206,6 @@ const RegisterDeliveryPage: React.FC = () => {
                 </p>
               </div>
             </div>
-
             {/* Spinner e instruções */}
             <div className="flex flex-col items-center justify-center mt-4">
               <div className="w-16 h-16 border-4 border-t-4 border-t-[#00C2FF] border-[#00C2FF]/30 rounded-full animate-spin mb-4"></div>
@@ -122,6 +217,9 @@ const RegisterDeliveryPage: React.FC = () => {
       </div>
     );
   }
+
+
+  
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134] overflow-x-hidden">
@@ -136,7 +234,6 @@ const RegisterDeliveryPage: React.FC = () => {
           Sistema de Entregas do Condomínio
         </p>
       </div>
-
       {/* Lado direito - Formulário */}
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 px-4 sm:px-6 md:px-10 overflow-y-auto">
         {/* Barra de progresso */}
@@ -150,6 +247,7 @@ const RegisterDeliveryPage: React.FC = () => {
           </div>
         </div>
 
+
         {/* Card de registro */}
         <div className="bg-[#ffffff18] border-2 border-[#606060] mr-0 md:mr-16 rounded-2xl w-150 max-w-full text-center shadow-lg overflow-hidden">
           {/* Cabeçalho do card */}
@@ -161,7 +259,6 @@ const RegisterDeliveryPage: React.FC = () => {
               Preencha os dados do destinatário
             </h3>
           </div>
-
           {/* Inputs */}
           <div className="px-4 sm:px-8 md:px-10">
             <p className="text-left mt-4 text-sm sm:text-base pl-3 text-white">
@@ -174,38 +271,59 @@ const RegisterDeliveryPage: React.FC = () => {
               value={destinatario}
               onChange={(e) => setDestinatario(e.target.value)}
             />
-            <p className="text-left mt-4 text-sm sm:text-base pl-3 text-white">
-              CEP do Condomínio
-            </p>
-            <Input
-              placeholder="Digite o CEP"
-              value={cep}
+
+            {/* CASA / APARTAMENTO */}
+            <p className="text-left mt-4 text-white">Tipo de Unidade</p>
+
+            <select
+              className="w-full h-9 bg-[#ffffff22] text-white rounded-lg px-2"
+              value={tipoUnidade}
               onChange={(e) => {
-                let value = e.target.value.replace(/\D/g, ''); // Remove não-dígitos
-                if (value.length > 5) {
-                  value = `${value.slice(0, 5)}-${value.slice(5)}`;
-                }
-                setCep(value.slice(0, 9)); // Limita a 9 chars (XXXXX-XXX)
+                setTipoUnidade(e.target.value);
+                setCep("");
+                setApartamento("");
               }}
-              className="!w-135 max-w-full h-8 pl-4"
-            />
-            <p className="text-left mt-4 text-sm sm:text-base pl-3 text-white">
-              Número da Casa / Apartamento
-            </p>
-            <Input
-              placeholder="Ex: 1205, Bloco A - Apt 804"
-              type="text"
-              className="!w-135 max-w-full h-8 pl-4"
-              value={apartamento}
-              onChange={(e) => setApartamento(e.target.value)}
-            />
+            >
+              <option value="">Selecione</option>
+              <option value="Casa">Casa</option>
+              <option value="Apartamento">Apartamento</option>
+            </select>
+
+            {/* CEP (CASA) */}
+            {tipoUnidade === "Casa" && (
+              <>
+                <p className="text-left mt-4 text-white">CEP da Casa</p>
+                <Input
+                  placeholder="Digite o CEP"
+                  value={cep}
+                  onChange={(e) => {
+                    let v = e.target.value.replace(/\D/g, "");
+                    if (v.length > 5) v = `${v.slice(0, 5)}-${v.slice(5)}`;
+                    setCep(v.slice(0, 9));
+                  }}
+                  className="!w-full h-8 pl-4"
+                />
+              </>
+            )}
+
+            {/* APTO (APARTAMENTO) */}
+            {tipoUnidade === "Apartamento" && (
+              <>
+                <p className="text-left mt-4 text-white">Número do Apto/Bloco</p>
+                <Input
+                  placeholder="Ex: Bloco A - Apt 804"
+                  value={apartamento}
+                  onChange={(e) => setApartamento(e.target.value)}
+                  className="!w-full h-8 pl-4"
+                />
+              </>
+            )}
           </div>
 
           {/* Tipo de Entrega */}
           <p className="flex flex-wrap text-left mt-4 text-sm sm:text-base pl-4 sm:pl-12 text-white">
             Tipo de Entrega
           </p>
-
           <div className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4 sm:gap-5 mb-6 px-4 sm:px-8">
             {/* Entrega Padrão */}
             <div
@@ -223,7 +341,6 @@ const RegisterDeliveryPage: React.FC = () => {
                 Encomendas, correspondências e documentos
               </p>
             </div>
-
             {/* Entrega Perecível */}
             <div
               onClick={() => setTipoEntrega("Perecível")}
@@ -240,7 +357,6 @@ const RegisterDeliveryPage: React.FC = () => {
                 Alimentos e/ou produtos refrigerados
               </p>
             </div>
-
             {/* Entrega Volumosa */}
             <div
               onClick={() => setTipoEntrega("Volumosa")}
@@ -258,7 +374,6 @@ const RegisterDeliveryPage: React.FC = () => {
               </p>
             </div>
           </div>
-
           {/* Modal */}
           {(tipoEntrega === "Volumosa" || tipoEntrega === "Perecível") && (
             <>
@@ -282,27 +397,43 @@ const RegisterDeliveryPage: React.FC = () => {
           {successMessage && (
             <p className="text-green-500 text-sm mt-2 mb-4 text-center">{successMessage}</p>
           )}
-
+          {/* Botões condicionais para opções de erro */}
+          {podeRetentar && (
+            <div className="flex justify-center px-4 sm:px-6 mb-4">
+              <Button
+                nome="Tentar Novamente"
+                estilo="secundary"
+                className="w-full text-white"
+                clique={() => {
+                  setDestinatario("");
+                  setApartamento("");
+                  setCep("");
+                  setErrorMessage("");
+                  setPodeRetentar(false);
+                }}
+              />
+            </div>
+          )}
+          {podeAcionarPortaria && (
+            <div className="flex justify-center px-4 sm:px-6 mb-4">
+              <Button
+                nome="Acionar Portaria"
+                estilo="secundary"
+                className="w-full text-white"
+                clique={() => {
+                  alert("Dirija-se à portaria para assistência.");
+                  // Ou router.push('/portaria') se houver uma página específica
+                }}
+              />
+            </div>
+          )}
           {/* Botão */}
           <div className="flex justify-center px-4 sm:px-6 mb-8">
             <Button
               nome="Confirmar e Continuar"
               estilo="primary"
               className="!w-133 max-w-full text-white text-xs sm:text-sm md:text-base"
-              clique={() => {
-                if (!destinatario.trim() || !apartamento.trim() || !cep.trim() || !tipoEntrega) {
-                  alert("Preencha todos os campos: Destinatário, Apartamento/Unidade, CEP e selecione o Tipo de Entrega.");
-                  return;
-                }
-                if (cep.replace(/\D/g, '').length !== 8) { // Remove não-dígitos e verifica 8 chars (CEP brasileiro)
-                  alert("CEP inválido. Deve ter 8 dígitos (ex.: 12345678 ou 12345-678).");
-                  return;
-                }
-                setLoading(true);
-                setTimeout(() => {
-                  router.push("/DeliveryPeople/AddressConfirmationPage");
-                }, 2000);
-              }}
+              clique={onSubmit}
             />
           </div>
         </div>
