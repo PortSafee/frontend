@@ -11,7 +11,7 @@ import axios from "axios";
 /*Definir Interfaces TypeScript para Payload e Resposta*/
 interface ValidarDestinatarioRequest {
   NomeDestinatario: string;
-  TipoUnidade: string; 
+  TipoUnidade: string;
   CEP?: string;
   Torre?: string;
   Numero?: string;
@@ -21,11 +21,11 @@ interface ValidacaoDestinatarioResponse {
   validado: boolean;
   mensagem: string;
   tipoResultado:
-    | "Sucesso"
-    | "DivergenciaNome"
-    | "DivergenciaCEP"
-    | "NaoEncontrado"
-    | "MultiplasCombinacoes";
+  | "Sucesso"
+  | "DivergenciaNome"
+  | "DivergenciaCEP"
+  | "NaoEncontrado"
+  | "MultiplasCombinacoes";
 
   dadosEncontrados?: {
     nomeMorador?: string;
@@ -49,8 +49,8 @@ const RegisterDeliveryPage: React.FC = () => {
   const [tipoEntrega, setTipoEntrega] = useState("");
   const [destinatario, setDestinatario] = useState("");
   const [apartamento, setApartamento] = useState("");
-  const [torre, setTorre] = useState(""); 
-  const [numero, setNumero] = useState("");   
+  const [torre, setTorre] = useState("");
+  const [numero, setNumero] = useState("");
   const [cep, setCep] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -74,11 +74,11 @@ const RegisterDeliveryPage: React.FC = () => {
     }
 
     if (tipoUnidade === "Apartamento") {
-  if (!torre.trim() || !numero.trim()) {
-    setErrorMessage("Digite Torre/Bloco e Número do Apartamento.");
-    return;
-  }
-}
+      if (!torre.trim() || !numero.trim()) {
+        setErrorMessage("Digite Torre/Bloco e Número do Apartamento.");
+        return;
+      }
+    }
 
 
     if (!tipoEntrega) {
@@ -101,11 +101,11 @@ const RegisterDeliveryPage: React.FC = () => {
 
     try {
       const requestData: ValidarDestinatarioRequest = {
-  NomeDestinatario: destinatario,
-  TipoUnidade: tipoUnidade,   
-  ...(tipoUnidade === "Casa" ? { CEP: cepLimpo } : {}),
-  ...(tipoUnidade === "Apartamento" ? { Torre: torre, Numero: numero } : {}),
-};
+        NomeDestinatario: destinatario,
+        TipoUnidade: tipoUnidade,
+        ...(tipoUnidade === "Casa" ? { CEP: cepLimpo } : {}),
+        ...(tipoUnidade === "Apartamento" ? { Torre: torre, Numero: numero } : {}),
+      };
 
       const backendUrl =
         process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5095";
@@ -121,35 +121,35 @@ const RegisterDeliveryPage: React.FC = () => {
       const data = response.data;
 
       if (data.validado) {
-  setSuccessMessage(data.mensagem || "Destinatário validado!");
+        setSuccessMessage(data.mensagem || "Destinatário validado!");
 
-  if (data.tokenValidacao)
-    localStorage.setItem("tokenValidacao", data.tokenValidacao);
+        if (data.tokenValidacao)
+          localStorage.setItem("tokenValidacao", data.tokenValidacao);
 
-  if (data.validacaoId)
-    localStorage.setItem("validacaoId", data.validacaoId.toString());
+        if (data.validacaoId)
+          localStorage.setItem("validacaoId", data.validacaoId.toString());
 
-  setTimeout(() => {
-    router.push("/DeliveryPeople/AddressConfirmationPage");
-  }, 1500);
-} else {
-  setErrorMessage(data.mensagem || "Erro na validação.");
-  setPodeRetentar(data.podeRetentar);
-  setPodeAcionarPortaria(data.podeAcionarPortaria);
-}
-} catch (error: any) {
-  let msg = "Erro ao conectar ao servidor.";
+        setTimeout(() => {
+          router.push("/DeliveryPeople/AddressConfirmationPage");
+        }, 1500);
+      } else {
+        setErrorMessage(data.mensagem || "Erro na validação.");
+        setPodeRetentar(data.podeRetentar);
+        setPodeAcionarPortaria(data.podeAcionarPortaria);
+      }
+    } catch (error: any) {
+      let msg = "Erro ao conectar ao servidor.";
 
-  if (error.response) msg = error.response.data?.mensagem || msg;
+      if (error.response) msg = error.response.data?.mensagem || msg;
 
-  setErrorMessage(msg);
-  setPodeRetentar(true);
-  setPodeAcionarPortaria(true);
-} finally {
-  setLoading(false);
-}
+      setErrorMessage(msg);
+      setPodeRetentar(true);
+      setPodeAcionarPortaria(true);
+    } finally {
+      setLoading(false);
+    }
   };
-    if (loading) {
+  if (loading) {
     return (
       <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134] overflow-x-hidden">
         {/* Lado esquerdo - Logo e nome */}
@@ -224,10 +224,11 @@ const RegisterDeliveryPage: React.FC = () => {
   }
 
 
-  
+
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134] overflow-x-hidden">
+      
       {/* Lado esquerdo - Logo e nome */}
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 text-center p-6">
         <img
@@ -278,10 +279,10 @@ const RegisterDeliveryPage: React.FC = () => {
             />
 
             {/* CASA / APARTAMENTO */}
-            <p className="text-left mt-4 text-white">Tipo de Unidade</p>
+            <p className="text-left mt-4 pl-3 text-white">Tipo de Unidade</p>
 
             <select
-              className="w-full h-9 bg-[#ffffff22] text-white rounded-lg px-2"
+              className="w-full h-8 bg-[#333B40] border-8px border-[#ffffff26] text-white rounded-2xl px-2"
               value={tipoUnidade}
               onChange={(e) => {
                 setTipoUnidade(e.target.value);
@@ -313,29 +314,29 @@ const RegisterDeliveryPage: React.FC = () => {
 
             {/* APTO (APARTAMENTO) */}
             {tipoUnidade === "Apartamento" && (
-  <>
-    <p className="text-left mt-4 text-white">Torre / Bloco</p>
-    <Input
-      placeholder="Ex: Bloco A"
-      value={torre}
-      onChange={(e) => setTorre(e.target.value)}
-      className="!w-full h-8 pl-4"
-    />
+              <>
+                <p className="text-left mt-4 text-white">Torre / Bloco</p>
+                <Input
+                  placeholder="Ex: Bloco A"
+                  value={torre}
+                  onChange={(e) => setTorre(e.target.value)}
+                  className="!w-full h-8 pl-4"
+                />
 
-    <p className="text-left mt-4 text-white">Número do Apartamento</p>
-    <Input
-      placeholder="Ex: 804"
-      value={numero}
-      onChange={(e) => setNumero(e.target.value)}
-      className="!w-full h-8 pl-4"
-    />
-  </>
-)}
+                <p className="text-left mt-4 text-white">Número do Apartamento</p>
+                <Input
+                  placeholder="Ex: 804"
+                  value={numero}
+                  onChange={(e) => setNumero(e.target.value)}
+                  className="!w-full h-8 pl-4"
+                />
+              </>
+            )}
 
           </div>
 
           {/* Tipo de Entrega */}
-          <p className="flex flex-wrap text-left mt-4 text-sm sm:text-base pl-4 sm:pl-12 text-white">
+          <p className="flex flex-wrap text-left mt-4 mb-1 text-sm sm:text-base pl-4 sm:pl-12 text-white">
             Tipo de Entrega
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4 sm:gap-5 mb-6 px-4 sm:px-8">
@@ -387,6 +388,8 @@ const RegisterDeliveryPage: React.FC = () => {
                 Pacotes grandes que não cabem no armário
               </p>
             </div>
+
+            
           </div>
           {/* Modal */}
           {(tipoEntrega === "Volumosa" || tipoEntrega === "Perecível") && (
@@ -405,42 +408,41 @@ const RegisterDeliveryPage: React.FC = () => {
               </div>
             </>
           )}
-          {errorMessage && (
-            <p className="text-red-500 text-sm mt-2 mb-4 text-center">{errorMessage}</p>
-          )}
-          {successMessage && (
-            <p className="text-green-500 text-sm mt-2 mb-4 text-center">{successMessage}</p>
-          )}
+          {errorMessage && ( <p className="ml-8 mr-8 mb-2 bg-[#c31f1f43] text-white p-1 rounded">{errorMessage}</p> )} 
+          {successMessage && ( <p className="ml-8 mr-8 mb-2 bg-[#1fc36343] text-white p-1 rounded">{successMessage}</p> )}
+
+          
+         
           {/* Botões condicionais para opções de erro */}
-          {podeRetentar && (
-            <div className="flex justify-center px-4 sm:px-6 mb-4">
-              <Button
-                nome="Tentar Novamente"
-                estilo="secundary"
-                className="w-full text-white"
-                clique={() => {
-                  setDestinatario("");
-                  setApartamento("");
-                  setCep("");
-                  setErrorMessage("");
-                  setPodeRetentar(false);
-                }}
-              />
-            </div>
-          )}
-          {podeAcionarPortaria && (
-            <div className="flex justify-center px-4 sm:px-6 mb-4">
-              <Button
-                nome="Acionar Portaria"
-                estilo="secundary"
-                className="w-full text-white"
-                clique={() => {
-                  alert("Dirija-se à portaria para assistência.");
-                  // Ou router.push('/portaria') se houver uma página específica
-                }}
-              />
-            </div>
-          )}
+          {(podeRetentar || podeAcionarPortaria) && (
+  <div className="flex justify-center gap-4 px-4 sm:px-6 mb-4">
+    {podeRetentar && (
+      <Button
+        nome="Tentar Novamente"
+        estilo="secundary"
+        className="flex-1 text-white"
+        clique={() => {
+          setDestinatario("");
+          setApartamento("");
+          setCep("");
+          setErrorMessage("");
+          setPodeRetentar(false);
+        }}
+      />
+    )}
+    {podeAcionarPortaria && (
+      <Button
+        nome="Acionar Portaria"
+        estilo="secundary"
+        className="flex-1 text-white"
+        clique={() => {
+          alert("Dirija-se à portaria para assistência.");
+        }}
+      />
+    )}
+  </div>
+)}
+
           {/* Botão */}
           <div className="flex justify-center px-4 sm:px-6 mb-8">
             <Button
