@@ -8,18 +8,18 @@ interface INavBar {
   nome: string;
   funcao: string;
   tipoUsuario: "funcionario" | "morador";
-  onNotificacoesClick?: () => void;
   onPerfilClick?: () => void;
   onSairClick?: () => void;
+  onChatClick?: () => void;
 }
 
 export default function Navbar({
   nome,
   funcao,
   tipoUsuario,
-  onNotificacoesClick,
   onPerfilClick,
-  onSairClick
+  onSairClick,
+  onChatClick
 }: INavBar) {
   return (
     <nav className="bg-[#0a1f2e] px-4 sm:px-6 py-4 flex items-center justify-between">
@@ -37,16 +37,9 @@ export default function Navbar({
         {tipoUsuario === "morador" && (
           <>
             <BsChatDots className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="hidden sm:inline">Assistente</span>
+            <span onClick={onChatClick} className="hidden sm:inline">Assistente</span>
           </>
         )}
-        <button
-          onClick={onNotificacoesClick}
-          className="flex items-center gap-2 hover:text-[#328BF1] transition"
-        >
-          <FaRegBell className="w-4 h-4 sm:w-5 sm:h-5" />
-          <span className="hidden sm:inline">Notificações</span>
-        </button>
         <button
           onClick={onPerfilClick}
           className="hidden sm:flex items-center gap-2 hover:text-[#328BF1] transition"

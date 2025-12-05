@@ -10,8 +10,10 @@ import { LuPackage } from "react-icons/lu";
 import { FiAlertTriangle, FiBox } from "react-icons/fi";
 import { IoPeople, IoSearchOutline } from "react-icons/io5";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const ResidentDashboard: React.FC = () => {
+    const router = useRouter();
     const [showProfile, setShowProfile] = useState(false);
     const [isActive, setIsActive] = useState(true);
     const [entregas, setEntregas] = useState<any[]>([]);
@@ -117,7 +119,10 @@ useEffect(() => {
             <NavBar
                 nome={morador?.nome || morador?.Nome || "Morador"}
                 funcao="Painel do Morador"
-                tipoUsuario="morador" />
+                tipoUsuario="morador"
+                onSairClick={() => router.push("/General/LoginPage")} 
+                onChatClick={() => router.push("/Resident/ChatBot")}
+                />
 
             <div className="flex flex-col lg:flex-row gap-4 p-4 sm:p-6 lg:p-8">
                 <button
