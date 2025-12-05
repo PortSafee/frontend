@@ -16,6 +16,8 @@ const ResidentDashboard: React.FC = () => {
     const [isActive, setIsActive] = useState(true);
     const [entregas, setEntregas] = useState<any[]>([]);
     const [morador, setMorador] = useState<any>(null);
+    const [historico, setHistorico] = useState<any[]>([]);
+
 
     useEffect(() => {
         const storedUser = localStorage.getItem("morador");
@@ -28,27 +30,61 @@ const ResidentDashboard: React.FC = () => {
 
 
     // Carrega morador e entregas
-    useEffect(() => {
-        const moradorId = morador?.id || morador?.Id;
+   // Carrega morador e entregas
+useEffect(() => {
+    const moradorId = morador?.id || morador?.Id;
+    if (!moradorId) return;
 
-        if (!moradorId) return;
+    const carregarEntregas = async () => {
+        try {
+            const response = await axios.get(
+                `http://localhost:5095/api/Entrega/PorMoradorId?id=${moradorId}`
+            );
+
+            const lista = response.data;
+
+            // separa entregas e histórico de verdade
+            const ativas = lista.filter((e: any) => e.status !== "Retirada");
+            const historicoDb = lista.filter((e: any) => e.status === "Retirada");
+
+            setEntregas(ativas);
+            setHistorico(historicoDb);
+
+        } catch (error) {
+            console.error("Erro ao carregar entregas:", error);
+        }
+    };
+
+    carregarEntregas();
+}, [morador]);
 
 
-        const carregarEntregas = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:5095/api/Entrega/PorMoradorId?id=${moradorId}`
-                );
 
+    const confirmarRetirada = async (id: number) => {
+    try {
+        await axios.put(`http://localhost:5095/api/Entrega/ConfirmarRetirada?entregaId=${id}`);
 
-                setEntregas(response.data);
-            } catch (error) {
-                console.error("Erro ao carregar entregas:", error);
+        // Atualiza localmente sem precisar refazer o GET
+        setEntregas(prev => {
+            const entregaConfirmada = prev.find(e => e.id === id);
+
+            if (entregaConfirmada) {
+                entregaConfirmada.status = "Retirada";
+                entregaConfirmada.dataHoraRetirada = new Date().toISOString();
+
+                setHistorico(h => [...h, entregaConfirmada]);
             }
-        };
 
-        carregarEntregas();
-    }, [morador]);
+            return prev.filter(e => e.id !== id);
+        });
+
+        alert("Entrega confirmada como retirada!");
+    } catch (error) {
+        console.error("Erro ao confirmar retirada:", error);
+    }
+};
+
+
 
 
     const entregasHoje = entregas.filter((e) => {
@@ -217,18 +253,49 @@ const ResidentDashboard: React.FC = () => {
                                             <Button
                                                 nome="Confirmar"
                                                 estilo="primary"
-                                                icon={
-                                                    <IoIosCheckmarkCircleOutline className="w-4 h-4" />
-                                                }
+                                                icon={<IoIosCheckmarkCircleOutline className="w-4 h-4" />}
                                                 className="!flex-1 sm:!w-28 !h-8 !text-xs sm:!text-sm !font-normal"
+                                                clique={() => confirmarRetirada(entrega.id)}
                                             />
                                         </div>
                                     </div>
                                 ))}
                             </>
                         ) : (
-                            <div> {/* histórico placeholder */} </div>
-                        )}
+    <div className="space-y-4">
+        <h2 className="title font-marmelad !text-lg sm:!text-2xl font-semibold text-white mb-4">
+            Histórico de Entregas
+        </h2>
+
+        {historico.length === 0 && (
+            <p className="text-gray-400 text-sm">Nenhuma entrega retirada ainda.</p>
+        )}
+
+        {historico.map((entrega) => (
+            <div
+                key={entrega.id}
+                className="bg-[#3F434E] border border-[#012032] rounded-xl p-4 flex flex-col gap-2"
+            >
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#4ADD80] rounded-lg flex items-center justify-center">
+                        <IoIosCheckmarkCircleOutline className="w-6 h-6 text-white" />
+                    </div>
+
+                    <div>
+                        <p className="font-semibold text-white">{entrega.enderecoGerado}</p>
+                        <p className="text-xs text-gray-300">
+                            Retirada em: {new Date(entrega.dataHoraRetirada || Date.now()).toLocaleString("pt-BR")}
+                        </p>
+                        <p className="text-xs text-gray-300">
+                            Código: {entrega.codigoEntrega}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        ))}
+    </div>
+)}
+
                     </div>
                 </div>
             </div>
