@@ -79,6 +79,11 @@ const LoginPage: React.FC = () => {
 
       const { usuario, token } = response.data;
 
+      // salvar no localStorage
+localStorage.setItem("morador", JSON.stringify(usuario));
+localStorage.setItem("token", token);
+
+
       console.log("Login sucesso:", usuario);
 
       // identificar se o backend reconheceu como morador
