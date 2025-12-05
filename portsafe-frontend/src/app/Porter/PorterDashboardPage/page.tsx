@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "@/components/NavBar";
 import MyProfile from "@/components/MyProfile";
 import Button from "@/components/Button";
@@ -9,13 +9,28 @@ import { FaRegBell, FaUser } from "react-icons/fa";
 import { LuPackage, LuPlus } from "react-icons/lu";
 import { FiAlertTriangle, FiBox } from "react-icons/fi";
 import { IoPeople, IoSearchOutline } from "react-icons/io5";
+import { useRouter } from "next/navigation";
 
 const PorterDashboard: React.FC = () => {
   const [showProfile, setShowProfile] = useState(false);
+  const [porteiro, setPorteiro] = useState<any>(null);
+  const router = useRouter();
 
+ useEffect(() => {
+  const storedUser = localStorage.getItem("porteiro");
+  if (storedUser) {
+    const parsedUser = JSON.parse(storedUser);
+    setPorteiro(parsedUser);
+  }
+}, []);
   return (
     <div className="min-h-screen bg-[#131826] text-white overflow-x-hidden">
-      <NavBar nome="Carlos Ferreira" funcao="Painel do Porteiro" tipoUsuario="funcionario" />
+      <NavBar 
+        nome={porteiro?.nome || porteiro?.Nome || "Porteiro"} 
+        funcao="Painel do Porteiro" 
+        tipoUsuario="funcionario"
+        onSairClick={() => router.push("/General/LoginPage")} 
+      />
 
       <div className="flex flex-col lg:flex-row gap-4 p-4 sm:p-6 lg:p-8">
         {/* Botão para mostrar perfil em telas menores */}
@@ -29,13 +44,13 @@ const PorterDashboard: React.FC = () => {
         {/* Perfil à esquerda - escondido em telas menores */}
         <div className="hidden lg:block lg:w-80 mx-auto lg:mx-0">
           <MyProfile
-            nome="Carlos Ferreira"
-            cargo="Porteiro Principal"
-            turno="Manhã - 06:00 às 14:00"
-            condominio="Residencial Jardins"
-            status="Em serviço"
-            tipoUsuario="funcionario"
-          />
+              nome={porteiro?.nome || porteiro?.Nome}
+              cargo={porteiro?.cargo || "Porteiro Principal"}
+              turno={porteiro?.turno || "06:00 às 14:00"}
+              condominio={porteiro?.condominio || "Residencial Jardins"}
+              status={porteiro?.status || "Em serviço"}
+              tipoUsuario="funcionario"
+            />
         </div>
 
         {/* Cards + Lista à direita */}
@@ -155,12 +170,12 @@ const PorterDashboard: React.FC = () => {
             />
 
 
-            <MyProfile
-              nome="Carlos Ferreira"
-              cargo="Porteiro Principal"
-              turno="Manhã - 06:00 às 14:00"
-              condominio="Residencial Jardins"
-              status="Em serviço"
+          <MyProfile
+              nome={porteiro?.nome || porteiro?.Nome}
+              cargo={porteiro?.cargo || "Porteiro Principal"}
+              turno={porteiro?.turno || "06:00 às 14:00"}
+              condominio={porteiro?.condominio || "Residencial Jardins"}
+              status={porteiro?.status || "Em serviço"}
               tipoUsuario="funcionario"
             />
           </div>

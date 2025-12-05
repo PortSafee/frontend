@@ -57,64 +57,68 @@ const LoginPage: React.FC = () => {
     return possuiCamposMorador || ehMoradorPeloEnum;
   };
 
-  const handleLogin = async () => {
-    setError("");
+const handleLogin = async () => {
+  setError("");
 
-    if (!selectedType) {
-      setError("Selecione Morador ou Porteiro antes de entrar.");
+  if (!selectedType) {
+    setError("Selecione Morador ou Porteiro antes de entrar.");
+    return;
+  }
+
+  if (!validateEmail(email)) {
+    setError('Formato de email inválido. Use @ e .');
+    return;
+  }
+
+  try {
+    const response = await axios.post(
+      '/api/Auth/Login',
+      { UsernameOrEmail: email, Password: password },
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+
+    const { usuario, token } = response.data;
+
+    console.log("Login sucesso:", usuario);
+
+    // identificar se o backend reconheceu como morador
+    const ehMorador = isMoradorFromUsuario(usuario);
+
+    // validação contra o toggle
+    const invalidProfileMessage = "Credenciais incompatíveis com o perfil selecionado.";
+
+    if (selectedType === "morador" && !ehMorador) {
+      setError(invalidProfileMessage);
       return;
     }
 
-    if (!validateEmail(email)) {
-      setError('Formato de email inválido. Use @ e .');
+    if (selectedType === "porteiro" && ehMorador) {
+      setError(invalidProfileMessage);
       return;
     }
 
-    try {
-      const response = await axios.post(
-        '/api/Auth/Login',
-        { UsernameOrEmail: email, Password: password },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-
-      const { usuario, token } = response.data;
-
-      // salvar no localStorage
+    // salvar no localStorage apenas o tipo correto
+    if (ehMorador) {
       localStorage.setItem("morador", JSON.stringify(usuario));
-      localStorage.setItem("token", token);
-
-
-      console.log("Login sucesso:", usuario);
-
-      // identificar se o backend reconheceu como morador
-      const ehMorador = isMoradorFromUsuario(usuario);
-
-      // validação contra o toggle
-      const invalidProfileMessage =
-        "Credenciais incompatíveis com o perfil selecionado.";
-
-      if (selectedType === "morador" && !ehMorador) {
-        setError(invalidProfileMessage);
-        return;
-      }
-
-      if (selectedType === "porteiro" && ehMorador) {
-        setError(invalidProfileMessage);
-        return;
-      }
-
-      // agora redireciona
-      if (ehMorador) {
-        router.push("/Resident/ResidentDashboardPage");
-      } else {
-        router.push("/Porter/PorterDashboardPage");
-      }
-
-    } catch (error) {
-      console.error("Erro no login:", error);
-      setError("Email ou senha inválidos.");
+    } else {
+      localStorage.setItem("porteiro", JSON.stringify(usuario));
     }
-  };
+
+    // salvar token
+    localStorage.setItem("token", token);
+
+    // agora redireciona
+    if (ehMorador) {
+      router.push("/Resident/ResidentDashboardPage");
+    } else {
+      router.push("/Porter/PorterDashboardPage");
+    }
+
+  } catch (error) {
+    console.error("Erro no login:", error);
+    setError("Email ou senha inválidos.");
+  }
+};
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-[#002236] via-black to-[#002134] relative">
