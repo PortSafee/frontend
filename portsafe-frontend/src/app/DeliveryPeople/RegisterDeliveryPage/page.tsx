@@ -121,18 +121,21 @@ const RegisterDeliveryPage: React.FC = () => {
       const data = response.data;
 
      if (data.validado) {
-        setSuccessMessage(data.mensagem);
+  setSuccessMessage(data.mensagem);
 
-        // Armazene os dados validados no localStorage para a próxima página
-        if (data.dadosEncontrados) {
-          localStorage.setItem("validatedDeliveryData", JSON.stringify(data.dadosEncontrados));
-        }
+  // Salva TODOS os dados necessários para os próximos passos
+  if (data.dadosEncontrados) {
+    localStorage.setItem("validatedDeliveryData", JSON.stringify(data.dadosEncontrados));
+  }
+  
+  // ESSAS DUAS LINHAS SÃO OBRIGATÓRIAS!
+  localStorage.setItem("tokenValidacao", data.tokenValidacao || "");
+  localStorage.setItem("validacaoId", data.validacaoId?.toString() || "");
 
-        // Redirecione para a página de confirmação
-        setTimeout(() => {
-          router.push("/DeliveryPeople/AddressConfirmationPage");
-        }, 1000);
-      } else {
+  setTimeout(() => {
+    router.push("/DeliveryPeople/AddressConfirmationPage");
+  }, 1000);
+} else {
         setErrorMessage(data.mensagem);
         setPodeRetentar(data.podeRetentar);
         setPodeAcionarPortaria(data.podeAcionarPortaria);
