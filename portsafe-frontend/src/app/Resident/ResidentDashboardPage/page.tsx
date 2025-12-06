@@ -32,59 +32,59 @@ const ResidentDashboard: React.FC = () => {
 
 
     // Carrega morador e entregas
-   // Carrega morador e entregas
-useEffect(() => {
-    const moradorId = morador?.id || morador?.Id;
-    if (!moradorId) return;
+    // Carrega morador e entregas
+    useEffect(() => {
+        const moradorId = morador?.id || morador?.Id;
+        if (!moradorId) return;
 
-    const carregarEntregas = async () => {
-        try {
-            const response = await axios.get(
-                `http://localhost:5095/api/Entrega/PorMoradorId?id=${moradorId}`
-            );
+        const carregarEntregas = async () => {
+            try {
+                const response = await axios.get(
+                    `http://localhost:5095/api/Entrega/PorMoradorId?id=${moradorId}`
+                );
 
-            const lista = response.data;
+                const lista = response.data;
 
-            // separa entregas e histórico de verdade
-            const ativas = lista.filter((e: any) => e.status !== "Retirada");
-            const historicoDb = lista.filter((e: any) => e.status === "Retirada");
+                // separa entregas e histórico de verdade
+                const ativas = lista.filter((e: any) => e.status !== "Retirada");
+                const historicoDb = lista.filter((e: any) => e.status === "Retirada");
 
-            setEntregas(ativas);
-            setHistorico(historicoDb);
+                setEntregas(ativas);
+                setHistorico(historicoDb);
 
-        } catch (error) {
-            console.error("Erro ao carregar entregas:", error);
-        }
-    };
+            } catch (error) {
+                console.error("Erro ao carregar entregas:", error);
+            }
+        };
 
-    carregarEntregas();
-}, [morador]);
+        carregarEntregas();
+    }, [morador]);
 
 
 
     const confirmarRetirada = async (id: number) => {
-    try {
-        await axios.put(`http://localhost:5095/api/Entrega/ConfirmarRetirada?entregaId=${id}`);
+        try {
+            await axios.put(`http://localhost:5095/api/Entrega/ConfirmarRetirada?entregaId=${id}`);
 
-        // Atualiza localmente sem precisar refazer o GET
-        setEntregas(prev => {
-            const entregaConfirmada = prev.find(e => e.id === id);
+            // Atualiza localmente sem precisar refazer o GET
+            setEntregas(prev => {
+                const entregaConfirmada = prev.find(e => e.id === id);
 
-            if (entregaConfirmada) {
-                entregaConfirmada.status = "Retirada";
-                entregaConfirmada.dataHoraRetirada = new Date().toISOString();
+                if (entregaConfirmada) {
+                    entregaConfirmada.status = "Retirada";
+                    entregaConfirmada.dataHoraRetirada = new Date().toISOString();
 
-                setHistorico(h => [...h, entregaConfirmada]);
-            }
+                    setHistorico(h => [...h, entregaConfirmada]);
+                }
 
-            return prev.filter(e => e.id !== id);
-        });
+                return prev.filter(e => e.id !== id);
+            });
 
-        alert("Entrega confirmada como retirada!");
-    } catch (error) {
-        console.error("Erro ao confirmar retirada:", error);
-    }
-};
+            alert("Entrega confirmada como retirada!");
+        } catch (error) {
+            console.error("Erro ao confirmar retirada:", error);
+        }
+    };
 
 
 
@@ -120,9 +120,9 @@ useEffect(() => {
                 nome={morador?.nome || morador?.Nome || "Morador"}
                 funcao="Painel do Morador"
                 tipoUsuario="morador"
-                onSairClick={() => router.push("/General/LoginPage")} 
+                onSairClick={() => router.push("/General/LoginPage")}
                 onChatClick={() => router.push("/Resident/ChatBot")}
-                />
+            />
 
             <div className="flex flex-col lg:flex-row gap-4 p-4 sm:p-6 lg:p-8">
                 <button
@@ -145,27 +145,32 @@ useEffect(() => {
 
                 <div className="flex-1 flex flex-col gap-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div className="bg-[#2A2F3B] border border-[#012032] rounded-2xl p-4 sm:p-6 flex items-start justify-between min-h-[150px]">
-                            <div className="flex flex-col">
-                                <h3 className="title font-marmelad !text-base sm:!text-lg font-semibold mb-1 sm:mb-2">Entregas Hoje</h3>
-                                <p className="title font-marmelad text-3xl sm:text-4xl font-bold">{entregasHoje.length}</p>
-                                <p className="text-xs sm:text-sm text-[#4ADD80] mt-2 sm:mt-3">
-                                    {entregasHoje.length > 0 ? "+12% desde ontem" : "Nenhuma entrega hoje"}
+                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                            <div className="bg-[#2A2F3B] border border-[#012032] rounded-2xl p-4 flex flex-col items-start flex-1 min-w-[370px]">
+                                <div className="flex items-center justify-between w-full">
+                                    <h3 className="title font-marmelad !text-base sm:!text-lg font-semibold">Entregas Hoje</h3>
+                                </div>
+                                <p className="title font-marmelad text-3xl sm:text-4xl font-bold mt-2">{entregasHoje.length}</p>
+                                <p className="text-xs sm:text-sm text-[#4ADD80] mt-2">
+                                    {entregasHoje.length > 0 ? "+1 desde ontem" : "Nenhuma entrega hoje"}
                                 </p>
                             </div>
 
-                            <div className="flex flex-col">
-                                <h3 className="title font-marmelad !text-base sm:!text-lg font-semibold mb-1 sm:mb-2 text-white">Aguardando Retirada</h3>
-                                <p className="title font-marmelad text-3xl sm:text-4xl font-bold text-white">{entregasAguardando.length}</p>
-                                <p className="text-xs sm:text-sm text-[#DBDB5A] mt-2 sm:mt-3">Na portaria/No armário</p>
+                            <div className="bg-[#2A2F3B] border border-[#012032] rounded-2xl p-4 flex flex-col items-start flex-1 min-w-[370px]">
+                                <div className="flex items-center justify-between w-full">
+                                    <h3 className="title font-marmelad !text-base sm:!text-lg font-semibold text-white">Aguardando Retirada</h3>
+                                </div>
+                                <p className="title font-marmelad text-3xl sm:text-4xl font-bold text-white mt-2">{entregasAguardando.length}</p>
+                                <p className="text-xs sm:text-sm text-[#DBDB5A] mt-2">Na portaria/No armário</p>
                             </div>
 
-                            <div className="flex flex-col">
-                                <h3 className="title font-marmelad !text-base sm:!text-lg font-semibold mb-1 sm:mb-2 text-white">Total do Mês</h3>
-                                <p className="title font-marmelad text-3xl sm:text-4xl font-bold text-white">{entregasMes.length}</p>
-                                <p className="text-xs sm:text-sm text-[#4ADD80] mt-2 sm:mt-3">Entregas Recebidas</p>
+                            <div className="bg-[#2A2F3B] border border-[#012032] rounded-2xl p-4 flex flex-col items-start flex-1 min-w-[370px]">
+                                <div className="flex items-center justify-between w-full">
+                                    <h3 className="title font-marmelad !text-base sm:!text-lg font-semibold text-white">Total do Mês</h3>
+                                </div>
+                                <p className="title font-marmelad text-3xl sm:text-4xl font-bold text-white mt-2">{entregasMes.length}</p>
+                                <p className="text-xs sm:text-sm text-[#4ADD80] mt-2">Entregas Recebidas</p>
                             </div>
-
                         </div>
                     </div>
 
@@ -267,39 +272,39 @@ useEffect(() => {
                                 ))}
                             </>
                         ) : (
-    <div className="space-y-4">
-        <h2 className="title font-marmelad !text-lg sm:!text-2xl font-semibold text-white mb-4">
-            Histórico de Entregas
-        </h2>
+                            <div className="space-y-4">
+                                <h2 className="title font-marmelad !text-lg sm:!text-2xl font-semibold text-white mb-4">
+                                    Histórico de Entregas
+                                </h2>
 
-        {historico.length === 0 && (
-            <p className="text-gray-400 text-sm">Nenhuma entrega retirada ainda.</p>
-        )}
+                                {historico.length === 0 && (
+                                    <p className="text-gray-400 text-sm">Nenhuma entrega retirada ainda.</p>
+                                )}
 
-        {historico.map((entrega) => (
-            <div
-                key={entrega.id}
-                className="bg-[#3F434E] border border-[#012032] rounded-xl p-4 flex flex-col gap-2"
-            >
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#4ADD80] rounded-lg flex items-center justify-center">
-                        <IoIosCheckmarkCircleOutline className="w-6 h-6 text-white" />
-                    </div>
+                                {historico.map((entrega) => (
+                                    <div
+                                        key={entrega.id}
+                                        className="bg-[#3F434E] border border-[#012032] rounded-xl p-4 flex flex-col gap-2"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-[#4ADD80] rounded-lg flex items-center justify-center">
+                                                <IoIosCheckmarkCircleOutline className="w-6 h-6 text-white" />
+                                            </div>
 
-                    <div>
-                        <p className="font-semibold text-white">{entrega.enderecoGerado}</p>
-                        <p className="text-xs text-gray-300">
-                            Retirada em: {new Date(entrega.dataHoraRetirada || Date.now()).toLocaleString("pt-BR")}
-                        </p>
-                        <p className="text-xs text-gray-300">
-                            Código: {entrega.codigoEntrega}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        ))}
-    </div>
-)}
+                                            <div>
+                                                <p className="font-semibold text-white">{entrega.enderecoGerado}</p>
+                                                <p className="text-xs text-gray-300">
+                                                    Retirada em: {new Date(entrega.dataHoraRetirada || Date.now()).toLocaleString("pt-BR")}
+                                                </p>
+                                                <p className="text-xs text-gray-300">
+                                                    Código: {entrega.codigoEntrega}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
 
                     </div>
                 </div>
