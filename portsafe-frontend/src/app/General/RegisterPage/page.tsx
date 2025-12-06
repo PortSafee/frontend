@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import ToggleButton from '@/components/ToggleButton';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
+import BackButton from "@/components/BackButton";
 import IconLogo from '@/assets/icons/icon_logo.png';
 import axios from 'axios';
 import Image from 'next/image';
@@ -177,7 +178,7 @@ const handleRegister = async () => {
 
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-[#002236] via-black to-[#002134] relative">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-r from-[#002236] via-black to-[#002134] relative">
 
       {/* Notificações */}
       {error && (
@@ -368,6 +369,7 @@ const handleRegister = async () => {
           Faça login aqui!
         </a>
       </div>
+       <BackButton className="mt-4 font-normal" />
     </div>
   );
 };

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
+import BackButton from "@/components/BackButton";
 import Logo from "@/assets/logo_portsafe.png";
 import { useRouter } from "next/navigation";
 import { BsPeople } from "react-icons/bs";
@@ -452,6 +453,7 @@ const RegisterDeliveryPage: React.FC = () => {
             />
           </div>
         </div>
+      <BackButton className="mt-4 font-normal" />
       </div>
     </div>
   );

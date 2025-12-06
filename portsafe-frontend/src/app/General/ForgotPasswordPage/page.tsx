@@ -6,6 +6,7 @@ import Input from '@/components/Input';
 import IconLogo from '@/assets/icons/icon_logo.png';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import BackButton from '@/components/BackButton';
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -54,7 +55,7 @@ const ForgotPasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-[#002236] via-black to-[#002134] relative">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-r from-[#002236] via-black to-[#002134] relative">
 
       {/* Notificações */}
       {error && (
@@ -102,6 +103,7 @@ const ForgotPasswordPage: React.FC = () => {
           </p>
         </div>
       </div>
+      <BackButton className="mt-4 font-normal" />
     </div>
   );
 };
