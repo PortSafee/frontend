@@ -282,7 +282,8 @@ const RegisterDeliveryPage: React.FC = () => {
             <p className="text-left mt-4 pl-3 text-white">Tipo de Unidade</p>
 
             <select
-              className="w-full h-8 bg-[#333B40] border-8px border-[#ffffff26] text-white rounded-2xl px-2"
+              className="w-full h-8 bg-[#333B40] text-white rounded-2xl px-2 
+             border border-[#ffffff26]"
               value={tipoUnidade}
               onChange={(e) => {
                 setTipoUnidade(e.target.value);
