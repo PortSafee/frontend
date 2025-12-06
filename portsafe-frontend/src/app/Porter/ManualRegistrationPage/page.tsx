@@ -38,7 +38,7 @@ const ManualRegisterPage: React.FC = () => {
         return false;
       }
     } else {
-      // Apartamento: deve enviar pelo menos número ou torre (o backend prefere número/torre)
+      // Apartamento: deve enviar pelo menos número ou torre/bloco
       if (!apartamento.trim() && !torre.trim()) {
         alert("Para 'Apartamento' informe número do apto ou torre.");
         return false;
@@ -60,19 +60,19 @@ const ManualRegisterPage: React.FC = () => {
       const bodyValidacao =
         tipoUnidade === "Casa"
           ? {
-              nomeDestinatario: nomeDestinatario.trim(),
-              tipoUnidade: "Casa",
-              cep: cepCasa.replace(/\D/g, ""), // envia somente dígitos
-              numero: null,
-              torre: null
-            }
+            nomeDestinatario: nomeDestinatario.trim(),
+            tipoUnidade: "Casa",
+            cep: cepCasa.replace(/\D/g, ""), // envia somente dígitos
+            numero: null,
+            torre: null
+          }
           : {
-              nomeDestinatario: nomeDestinatario.trim(),
-              tipoUnidade: "Apartamento",
-              numero: apartamento ? apartamento.trim() : null,
-              torre: torre ? torre.trim() : null,
-              cep: null
-            };
+            nomeDestinatario: nomeDestinatario.trim(),
+            tipoUnidade: "Apartamento",
+            numero: apartamento ? apartamento.trim() : null,
+            torre: torre ? torre.trim() : null,
+            cep: null
+          };
 
       console.log("Enviando payload ValidarDestinatario:", bodyValidacao);
 
@@ -83,7 +83,7 @@ const ManualRegisterPage: React.FC = () => {
         body: JSON.stringify(bodyValidacao)
       });
 
-      
+
 
       // Trata respostas não-ok com segurança
       let validarData: any = null;
@@ -119,22 +119,22 @@ const ManualRegisterPage: React.FC = () => {
       }
 
       // 2) Solicitar armário (payload completo EXIGIDO pelo backend)
-const solicitarPayload = {
-  unidadeId: unidadeId,
-  tokenValidacao: validarData.tokenValidacao, // ⚠ OBRIGATÓRIO
-  nomeEntregador: nomeEntregador.trim(),
-  empresa: empresa.trim(),
-  observacoes: observacoes.trim(),
-  telefone: validarData.dadosEncontrados?.telefoneWhatsApp || telefone.trim()
-};
+      const solicitarPayload = {
+        unidadeId: unidadeId,
+        tokenValidacao: validarData.tokenValidacao, // ⚠ OBRIGATÓRIO
+        nomeEntregador: nomeEntregador.trim(),
+        empresa: empresa.trim(),
+        observacoes: observacoes.trim(),
+        telefone: validarData.dadosEncontrados?.telefoneWhatsApp || telefone.trim()
+      };
 
-console.log("Payload SolicitarArmario:", solicitarPayload);
+      console.log("Payload SolicitarArmario:", solicitarPayload);
 
-const solicitarResp = await fetch("http://localhost:5095/api/Entrega/SolicitarArmario", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(solicitarPayload)
-});
+      const solicitarResp = await fetch("http://localhost:5095/api/Entrega/SolicitarArmario", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(solicitarPayload)
+      });
 
 
       let solicitarData: any = null;
@@ -247,27 +247,46 @@ const solicitarResp = await fetch("http://localhost:5095/api/Entrega/SolicitarAr
       {/* Lado direito */}
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 px-4 sm:px-6 md:px-10 py-6 md:py-0 overflow-y-auto">
         <div className="w-full max-w-[600px] bg-[#ffffff18] border-2 border-[#606060] rounded-3xl text-white text-center shadow-xl">
-          <div className="flex items-center justify-center p-4 bg-[#084571] rounded-t-3xl">
-            <h1 className="title font-marmelad !text-2xl sm:!text-3xl md:text-3xl">{etapa === "form" ? "Registro manual" : "Confirme o fechamento"}</h1>
-          </div>
+          <div className="flex flex-col items-center justify-center p-8 bg-[#084571] rounded-t-3xl min-h-[150px]">
+  <h1 className="title font-marmelad text-2xl">Registro Manual</h1>
+  <h3 className="mt-2">Preencha os dados de entrega</h3>
+</div>
+
 
           {etapa === "form" && (
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div className="flex flex-col">
                   <p className="text-left mt-2 pl-1">Nome do Entregador</p>
-                  <Input placeholder="Digite o nome do entregador" value={nomeEntregador} onChange={(e) => setNomeEntregador(e.target.value)} />
+                  <Input 
+                  placeholder="Digite o nome do entregador" 
+                  value={nomeEntregador} 
+                  onChange={(e) => 
+                  setNomeEntregador(e.target.value)} 
+                  className="h-8 pl-2"
+                  />
 
                   <p className="text-left mt-4 pl-1">Nome do Morador</p>
-                  <Input placeholder="Digite o nome do morador" value={nomeDestinatario} onChange={(e) => setNomeDestinatario(e.target.value)} />
+                  <Input 
+                  placeholder="Digite o nome do morador" 
+                  value={nomeDestinatario} 
+                  onChange={(e) => 
+                  setNomeDestinatario(e.target.value)} 
+                  className="h-8 pl-2"
+                  />
                 </div>
 
                 <div className="flex flex-col">
                   <p className="text-left mt-2 pl-1">Empresa</p>
-                  <Input placeholder="Digite o nome da empresa" value={empresa} onChange={(e) => setEmpresa(e.target.value)} />
+                  <Input 
+                  placeholder="Digite o nome da empresa" 
+                  value={empresa} 
+                  onChange={(e) => setEmpresa(e.target.value)} 
+                  className="h-8 pl-2"
+                  />
 
                   <p className="text-left mt-4 pl-1">Tipo de Unidade</p>
-                  <select className="bg-[#ffffff18] border border-[#606060] rounded-xl px-3 py-2 text-white" value={tipoUnidade} onChange={(e) => setTipoUnidade(e.target.value as any)}>
+                  <select className="bg-[#333B40] border border-[#606060] h-8 rounded-xl px-3 py-1 text-white" value={tipoUnidade} onChange={(e) => setTipoUnidade(e.target.value as any)}>
                     <option value="Apartamento">Apartamento</option>
                     <option value="Casa">Casa</option>
                   </select>
@@ -277,12 +296,21 @@ const solicitarResp = await fetch("http://localhost:5095/api/Entrega/SolicitarAr
                   <>
                     <div className="flex flex-col">
                       <p className="text-left mt-2 pl-1">Apartamento (número)</p>
-                      <Input placeholder="Ex: 1205" value={apartamento} onChange={(e) => setApartamento(e.target.value)} />
+                      <Input 
+                      placeholder="Ex: 1205" 
+                      value={apartamento} 
+                      onChange={(e) => setApartamento(e.target.value)} 
+                      className="h-8 pl-2"
+                      />
                     </div>
 
                     <div className="flex flex-col">
                       <p className="text-left mt-2 pl-1">Torre</p>
-                      <Input placeholder="Ex: Torre A" value={torre} onChange={(e) => setTorre(e.target.value)} />
+                      <Input 
+                      placeholder="Ex: Torre A" 
+                      value={torre} onChange={(e) => setTorre(e.target.value)} 
+                      className="h-8 pl-2"
+                      />
                     </div>
                   </>
                 )}
@@ -290,18 +318,33 @@ const solicitarResp = await fetch("http://localhost:5095/api/Entrega/SolicitarAr
                 {tipoUnidade === "Casa" && (
                   <div className="col-span-2 flex flex-col">
                     <p className="text-left mt-2 pl-1">CEP da Casa (somente números)</p>
-                    <Input placeholder="Ex: 18000000" value={cepCasa} onChange={(e) => setCepCasa(e.target.value)} />
+                    <Input 
+                    placeholder="Ex: 18000000" 
+                    value={cepCasa} 
+                    onChange={(e) => setCepCasa(e.target.value)} 
+                    className="h-8 pl-2"
+                    />
                   </div>
                 )}
 
                 <div className="col-span-2 flex flex-col">
                   <p className="text-left mt-2 pl-1">Telefone do morador</p>
-                  <Input placeholder="Telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+                  <Input 
+                  placeholder="Digite o telefone do morador" 
+                  value={telefone} 
+                  onChange={(e) => setTelefone(e.target.value)} 
+                  className="h-8 pl-2"
+                  />
                 </div>
 
                 <div className="col-span-2 flex flex-col">
                   <p className="text-left mt-2 pl-1">Observações</p>
-                  <Input placeholder="Observações" value={observacoes} onChange={(e) => setObservacoes(e.target.value)} />
+                  <Input 
+                  placeholder="Observações" 
+                  value={observacoes} 
+                  onChange={(e) => setObservacoes(e.target.value)} 
+                  className="h-16 pl-2"
+                  />
                 </div>
               </div>
 
