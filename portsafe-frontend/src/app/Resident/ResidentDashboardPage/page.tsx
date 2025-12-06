@@ -87,8 +87,6 @@ const ResidentDashboard: React.FC = () => {
     };
 
 
-
-
     const entregasHoje = entregas.filter((e) => {
         const entregaDate = new Date(e.dataHoraRegistro);
         const today = new Date();
@@ -145,32 +143,30 @@ const ResidentDashboard: React.FC = () => {
 
                 <div className="flex-1 flex flex-col gap-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
-                            <div className="bg-[#2A2F3B] border border-[#012032] rounded-2xl p-4 flex flex-col items-start flex-1 min-w-[370px]">
-                                <div className="flex items-center justify-between w-full">
-                                    <h3 className="title font-marmelad !text-base sm:!text-lg font-semibold">Entregas Hoje</h3>
-                                </div>
-                                <p className="title font-marmelad text-3xl sm:text-4xl font-bold mt-2">{entregasHoje.length}</p>
-                                <p className="text-xs sm:text-sm text-[#4ADD80] mt-2">
-                                    {entregasHoje.length > 0 ? "+1 desde ontem" : "Nenhuma entrega hoje"}
-                                </p>
+                        <div className="bg-[#2A2F3B] border border-[#012032] rounded-2xl p-4 flex flex-col items-start">
+                            <div className="flex items-center justify-between w-full">
+                                <h3 className="title font-marmelad !text-lg sm:!text-xl font-semibold">Entregas Hoje</h3>
                             </div>
+                            <p className="title font-marmelad text-3xl sm:text-4xl font-bold mt-2">{entregasHoje.length}</p>
+                            <p className="text-xs sm:text-sm text-[#4ADD80] mt-2">
+                                {entregasHoje.length > 0 ? "+1 desde ontem" : "Nenhuma entrega hoje"}
+                            </p>
+                        </div>
 
-                            <div className="bg-[#2A2F3B] border border-[#012032] rounded-2xl p-4 flex flex-col items-start flex-1 min-w-[370px]">
-                                <div className="flex items-center justify-between w-full">
-                                    <h3 className="title font-marmelad !text-base sm:!text-lg font-semibold text-white">Aguardando Retirada</h3>
-                                </div>
-                                <p className="title font-marmelad text-3xl sm:text-4xl font-bold text-white mt-2">{entregasAguardando.length}</p>
-                                <p className="text-xs sm:text-sm text-[#DBDB5A] mt-2">Na portaria/No armário</p>
+                        <div className="bg-[#2A2F3B] border border-[#012032] rounded-2xl p-4 flex flex-col items-start">
+                            <div className="flex items-center justify-between w-full">
+                                <h3 className="title font-marmelad !text-lg sm:!text-xl font-semibold text-white">Aguardando Retirada</h3>
                             </div>
+                            <p className="title font-marmelad text-3xl sm:text-4xl font-bold text-white mt-2">{entregasAguardando.length}</p>
+                            <p className="text-xs sm:text-sm text-[#DBDB5A] mt-2">Na portaria/No armário</p>
+                        </div>
 
-                            <div className="bg-[#2A2F3B] border border-[#012032] rounded-2xl p-4 flex flex-col items-start flex-1 min-w-[370px]">
-                                <div className="flex items-center justify-between w-full">
-                                    <h3 className="title font-marmelad !text-base sm:!text-lg font-semibold text-white">Total do Mês</h3>
-                                </div>
-                                <p className="title font-marmelad text-3xl sm:text-4xl font-bold text-white mt-2">{entregasMes.length}</p>
-                                <p className="text-xs sm:text-sm text-[#4ADD80] mt-2">Entregas Recebidas</p>
+                        <div className="bg-[#2A2F3B] border border-[#012032] rounded-2xl p-4 flex flex-col items-start">
+                            <div className="flex items-center justify-between w-full">
+                                <h3 className="title font-marmelad !text-lg sm:!text-xl font-semibold text-white">Total do Mês</h3>
                             </div>
+                            <p className="title font-marmelad text-3xl sm:text-4xl font-bold text-white mt-2">{entregasMes.length}</p>
+                            <p className="text-xs sm:text-sm text-[#4ADD80] mt-2">Entregas Recebidas</p>
                         </div>
                     </div>
 
