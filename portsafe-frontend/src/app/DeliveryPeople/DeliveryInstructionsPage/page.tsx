@@ -164,13 +164,13 @@ const DeliveryInstructionsPage: React.FC = () => {
 
             {/* Instruções */}
             <div className="px-4 sm:px-8 md:px-4 bg-[#1fc3631b] rounded-2xl m-6 mt-0 p-4 border-2 border-[#1FC364]">
-              <p className="text-left text-sm sm:text-base text-[#83EAAA] font-bold">Instruções:</p>
-              <ol className="text-left text-sm sm:text-base text-white px-4 space-y-1">
-                <li>Localize o armário {armarioData.numeroArmario}</li>
-                <li>Abra a porta (já está destrancada)</li>
-                <li>Coloque a encomenda dentro</li>
-                <li>Feche a porta completamente</li>
-                <li>Clique em "Confirmar Depósito"</li>
+              <p className="text-left text-sm sm:text-base text-[#83EAAA]">Instruções:</p>
+              <ol className="text-left text-sm sm:text-base text-[#83EAAA] space-y-1">
+                <li>1. Localize o armário {armarioData.numeroArmario}</li>
+                <li>2. Abra a porta (já está destrancada)</li>
+                <li>3. Coloque a encomenda dentro</li>
+                <li>4. Feche a porta completamente</li>
+                <li>5. Clique em "Confirmar Depósito"</li>
               </ol>
             </div>
 

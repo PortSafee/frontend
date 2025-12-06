@@ -48,6 +48,7 @@ const DeliverySuccessPage: React.FC = () => {
         <div className="flex flex-col justify-center items-center w-full md:w-1/2">
           <div className="bg-[#ffffff18] border-2 border-[#606060] rounded-2xl p-10">
             <h1 className="text-3xl text-white text-center">Finalizando entrega...</h1>
+            <h3 className="text-white text-center mt-4">Por favor, aguarde um momento.</h3>
           </div>
         </div>
       </div>
@@ -80,8 +81,8 @@ const DeliverySuccessPage: React.FC = () => {
           </p>
 
           <div className="px-6 py-4 bg-[#0cafd831] border-2 border-[#0CB0D8] rounded-2xl mx-6 mt-4">
-            <p className="text-white font-semibold text-xs">Código da Entrega</p>
-            <p className="text-white text-3xl sm:text-4xl font-bold mt-1">{entrega.codigoEntrega}</p>
+            <p className="text-white font-normal text-xs">CODIGO DE ENTREGA</p>
+            <p className="text-white text-4xl sm:text-5xl font-bold mt-1">{entrega.codigoEntrega}</p>
           </div>
 
           <div className="px-4 sm:px-8 md:px-4 bg-[#ffffff18] rounded-2xl m-6 mt-6 p-4 border-2 border-[#606060]">
@@ -104,22 +105,29 @@ const DeliverySuccessPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center pl-6 pr-6">
             <div className="bg-[#1fc36325] border-1 border-[#1FC364] text-white font-bold py-2 px-3 rounded-lg text-sm">
               WhatsApp
-              <p className="mt-1 font-extralight text-sm">Mensagem enviada com o código</p>
+              <p className="mt-5 font-extralight text-sm">Mensagem enviada com o código de retirada</p>
             </div>
             <div className="bg-[#0cafd82a] border-1 border-[#0CB0D8] text-white font-bold py-2 px-3 rounded-lg text-sm">
               App do Condomínio
-              <p className="mt-1 font-extralight text-sm">Notificação enviada</p>
+              <p className="mt-8 font-extralight text-sm">Notificação enviada ao morador</p>
             </div>
             <div className="bg-[#f77a1425] border-1 border-[#F77B14] text-white font-bold py-2 px-3 rounded-lg text-sm">
               QR Code gerado
-              <p className="mt-1 font-extralight text-sm">Morador pode escanear ou digitar</p>
+              <p className="mt-1 font-extralight text-sm">O morador pode escanear o código enviado ou usar a senha numérica para retirar a encomenda</p>
             </div>
           </div>
 
+          <Button 
+          nome="Finalizar e Voltar ao Início"
+          estilo="primary"
+          className="!w-full text-white text-xs sm:text-sm mt-6 mb-2 ml-6 mr-6"
+          clique={router.push.bind(router, "/General/SelectProfilePage")}
+          />
+
           <Button
             nome="Registrar Nova Entrega"
-            estilo="primary"
-            className="!w-full text-white text-xs sm:text-sm mt-6 ml-6 mr-6"
+            estilo="transparent"
+            className="!w-full text-white text-xs sm:text-sm mb-6 ml-6 mr-6 !bg-transparent"
             clique={() => {
               localStorage.clear();
               router.push("/DeliveryPeople/RegisterDeliveryPage");
