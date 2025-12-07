@@ -18,7 +18,7 @@ const ManualRegisterPage: React.FC = () => {
   const [telefone, setTelefone] = useState("");
   const [observacoes, setObservacoes] = useState("");
 
-  const [tipoEntrega, setTipoEntrega] = useState<"Padrão" | "Perecível" | "Volumosa">("Padrão");
+  const [tipoEntrega, setTipoEntrega] = useState<"Perecível" | "Volumosa">("Perecível");
 
   const [loading, setLoading] = useState(false);
 
@@ -105,92 +105,52 @@ const ManualRegisterPage: React.FC = () => {
         return;
       }
 
-      // 2) Lógica do tipo de entrega
-      if (tipoEntrega === "Padrão") {
-        // Entrega padrão → solicita armário
-        const solicitarPayload = {
-          unidadeId: unidadeId,
-          tokenValidacao: validarData.tokenValidacao,
-          nomeEntregador: nomeEntregador.trim(),
-          observacoes: observacoes.trim(),
-          telefone: validarData.dadosEncontrados?.telefoneWhatsApp || telefone.trim()
-        };
+      // Entrega perecível ou volumosa → precisamos criar a entrega no backend
+      // Chamamos AcionarPortaria para gravar a entrega como RedirecionadoPortaria
+      const acionarPayload = {
+        nomeDestinatario: nomeDestinatario.trim(),
+        CEP: tipoUnidade === "Casa" ? (cepCasa || "").replace(/\D/g, "") : null
+      };
 
-        console.log("Payload SolicitarArmario:", solicitarPayload);
+      console.log("Payload AcionarPortaria:", acionarPayload);
 
-        const solicitarResp = await fetch("http://localhost:5095/api/Entrega/SolicitarArmario", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(solicitarPayload)
-        });
+      const acionarResp = await fetch("http://localhost:5095/api/Entrega/AcionarPortaria", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(acionarPayload)
+      });
 
-        let solicitarData: any = null;
-        try {
-          solicitarData = await solicitarResp.json();
-        } catch (e) {
-          const txt = await solicitarResp.text();
-          console.error("Resposta inválida do servidor (SolicitarArmario):", solicitarResp.status, txt);
-          alert(`Erro ao solicitar armário: ${txt || solicitarResp.status}`);
-          return;
-        }
-
-        if (!solicitarResp.ok) {
-          const msg = solicitarData?.mensagem || solicitarData?.Message || JSON.stringify(solicitarData);
-          alert(msg || "Não há armários disponíveis.");
-          return;
-        }
-
-        // Aqui o backend já criou a entrega (Aguardando/Armazenada dependendo do backend)
-        // Guardamos o retorno completo para a etapa de fechamento
-        setDadosArmario(solicitarData);
-      } else {
-        // Entrega perecível ou volumosa → precisamos criar a entrega no backend
-        // Chamamos AcionarPortaria para gravar a entrega como RedirecionadoPortaria
-        const acionarPayload = {
-          nomeDestinatario: nomeDestinatario.trim(),
-          CEP: tipoUnidade === "Casa" ? (cepCasa || "").replace(/\D/g, "") : null
-        };
-
-        console.log("Payload AcionarPortaria:", acionarPayload);
-
-        const acionarResp = await fetch("http://localhost:5095/api/Entrega/AcionarPortaria", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(acionarPayload)
-        });
-
-        let acionarData: any = null;
-        try {
-          acionarData = await acionarResp.json();
-        } catch (e) {
-          const txt = await acionarResp.text();
-          console.error("Resposta inválida do servidor (AcionarPortaria):", acionarResp.status, txt);
-          alert(`Erro ao acionar portaria: ${txt || acionarResp.status}`);
-          return;
-        }
-
-        if (!acionarResp.ok) {
-          const msg = acionarData?.mensagem || JSON.stringify(acionarData);
-          alert(msg || "Erro ao registrar na portaria.");
-          return;
-        }
-
-        // Normaliza um objeto que a UI espera — garante que exista um ID/protocolo
-        const entregaId =
-          acionarData?.ProtocoloAtendimento ??
-          acionarData?.protocoloAtendimento ??
-          acionarData?.protocolo ??
-          acionarData?.EntregaId ??
-          acionarData?.entregaId ??
-          null;
-
-        setDadosArmario({
-          sucesso: true,
-          status: "Na Portaria",
-          entregaId,
-          raw: acionarData
-        });
+      let acionarData: any = null;
+      try {
+        acionarData = await acionarResp.json();
+      } catch (e) {
+        const txt = await acionarResp.text();
+        console.error("Resposta inválida do servidor (AcionarPortaria):", acionarResp.status, txt);
+        alert(`Erro ao acionar portaria: ${txt || acionarResp.status}`);
+        return;
       }
+
+      if (!acionarResp.ok) {
+        const msg = acionarData?.mensagem || JSON.stringify(acionarData);
+        alert(msg || "Erro ao registrar na portaria.");
+        return;
+      }
+
+      // Normaliza um objeto que a UI espera — garante que exista um ID/protocolo
+      const entregaId =
+        acionarData?.ProtocoloAtendimento ??
+        acionarData?.protocoloAtendimento ??
+        acionarData?.protocolo ??
+        acionarData?.EntregaId ??
+        acionarData?.entregaId ??
+        null;
+
+      setDadosArmario({
+        sucesso: true,
+        status: "Na Portaria",
+        entregaId,
+        raw: acionarData
+      });
 
       setEtapa("fechamento");
     } catch (err) {
@@ -213,36 +173,7 @@ const ManualRegisterPage: React.FC = () => {
         return;
       }
 
-      const entregaId = dadosArmario.entregaId ?? dadosArmario.EntregaId ?? dadosArmario.entregaID ?? dadosArmario.EntregaId;
-
-      if (dadosArmario.status === "Na Portaria") {
-        // Já gravamos no backend via AcionarPortaria no passo anterior — apenas informar o usuário.
-        alert("Entrega registrada com sucesso na Portaria!");
-      } else {
-        // Fechamento de armário: confirmar fechamento no backend
-        const resp = await fetch("http://localhost:5095/api/Entrega/ConfirmarFechamento", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ entregaId })
-        });
-
-        let data: any = null;
-        try {
-          data = await resp.json();
-        } catch {
-          const txt = await resp.text();
-          console.error("Resposta inválida do servidor (ConfirmarFechamento):", resp.status, txt);
-          alert(`Erro ao confirmar fechamento: ${txt || resp.status}`);
-          return;
-        }
-
-        if (!resp.ok || !data.sucesso) {
-          alert(data?.mensagem || "Erro ao confirmar fechamento.");
-          return;
-        }
-
-        alert("Entrega registrada e morador notificado com sucesso!");
-      }
+      alert("Entrega registrada com sucesso na Portaria!");
 
       // Resetar formulário
       setEtapa("form");
@@ -254,7 +185,7 @@ const ManualRegisterPage: React.FC = () => {
       setObservacoes("");
       setTorre("");
       setCepCasa("");
-      setTipoEntrega("Padrão");
+      setTipoEntrega("Perecível");
     } catch (err) {
       console.error("Erro em handleConfirmarFechamento:", err);
       alert("Erro ao confirmar fechamento.");
@@ -309,7 +240,6 @@ const ManualRegisterPage: React.FC = () => {
                     value={tipoEntrega}
                     onChange={(e) => setTipoEntrega(e.target.value as any)}
                   >
-                    <option value="Padrão">Padrão</option>
                     <option value="Perecível">Perecível</option>
                     <option value="Volumosa">Volumosa</option>
                   </select>
