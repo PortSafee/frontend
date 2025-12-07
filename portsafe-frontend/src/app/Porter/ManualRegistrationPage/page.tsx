@@ -1,3 +1,4 @@
+// ManualRegistrationPage.tsx
 "use client";
 import React, { useState } from "react";
 import Button from "@/components/Button";
@@ -47,7 +48,7 @@ const ManualRegisterPage: React.FC = () => {
   };
 
   // =======================================================================
-  // 1️⃣ REGISTRAR ENTREGA — VALIDAR + SOLICITAR ARMÁRIO OU NA PORTARIA
+  // 1️⃣ REGISTRAR ENTREGA — VALIDAR + SOLICITAR ARMÁRIO OU ACIONAR PORTARIA
   // =======================================================================
   const handleRegistrar = async () => {
     try {
@@ -139,13 +140,55 @@ const ManualRegisterPage: React.FC = () => {
           return;
         }
 
+        // Aqui o backend já criou a entrega (Aguardando/Armazenada dependendo do backend)
+        // Guardamos o retorno completo para a etapa de fechamento
         setDadosArmario(solicitarData);
       } else {
-        // Entrega perecível ou volumosa → registra "Na Portaria"
+        // Entrega perecível ou volumosa → precisamos criar a entrega no backend
+        // Chamamos AcionarPortaria para gravar a entrega como RedirecionadoPortaria
+        const acionarPayload = {
+          nomeDestinatario: nomeDestinatario.trim(),
+          CEP: tipoUnidade === "Casa" ? (cepCasa || "").replace(/\D/g, "") : null
+        };
+
+        console.log("Payload AcionarPortaria:", acionarPayload);
+
+        const acionarResp = await fetch("http://localhost:5095/api/Entrega/AcionarPortaria", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(acionarPayload)
+        });
+
+        let acionarData: any = null;
+        try {
+          acionarData = await acionarResp.json();
+        } catch (e) {
+          const txt = await acionarResp.text();
+          console.error("Resposta inválida do servidor (AcionarPortaria):", acionarResp.status, txt);
+          alert(`Erro ao acionar portaria: ${txt || acionarResp.status}`);
+          return;
+        }
+
+        if (!acionarResp.ok) {
+          const msg = acionarData?.mensagem || JSON.stringify(acionarData);
+          alert(msg || "Erro ao registrar na portaria.");
+          return;
+        }
+
+        // Normaliza um objeto que a UI espera — garante que exista um ID/protocolo
+        const entregaId =
+          acionarData?.ProtocoloAtendimento ??
+          acionarData?.protocoloAtendimento ??
+          acionarData?.protocolo ??
+          acionarData?.EntregaId ??
+          acionarData?.entregaId ??
+          null;
+
         setDadosArmario({
           sucesso: true,
           status: "Na Portaria",
-          numeroArmario: null
+          entregaId,
+          raw: acionarData
         });
       }
 
@@ -170,11 +213,13 @@ const ManualRegisterPage: React.FC = () => {
         return;
       }
 
-      const entregaId = dadosArmario.entregaId ?? dadosArmario.EntregaId ?? dadosArmario.entregaID;
+      const entregaId = dadosArmario.entregaId ?? dadosArmario.EntregaId ?? dadosArmario.entregaID ?? dadosArmario.EntregaId;
 
       if (dadosArmario.status === "Na Portaria") {
+        // Já gravamos no backend via AcionarPortaria no passo anterior — apenas informar o usuário.
         alert("Entrega registrada com sucesso na Portaria!");
       } else {
+        // Fechamento de armário: confirmar fechamento no backend
         const resp = await fetch("http://localhost:5095/api/Entrega/ConfirmarFechamento", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

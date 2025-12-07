@@ -45,6 +45,7 @@ const ResidentDashboard: React.FC = () => {
       lista = lista.map((e: any) => {
         if (e.status === "No armário" || e.status === "Armazenada") e.status = "Armazenada";
         if (e.status === "AguardandoArmario") e.status = "Na portaria";
+        if (e.status === "RedirecionadoPortaria") e.status = "Na portaria";
         return e;
       });
 
@@ -111,8 +112,8 @@ const ResidentDashboard: React.FC = () => {
 
   // Ativas
   const entregasAguardando = entregas.filter(
-    (e) => e.status === "Na portaria" || e.status === "Armazenada"
-  );
+  (e) => e.status === "Na portaria" || e.status === "Armazenada"
+);
 
   const entregasFiltradas = entregas.filter(
     (e) =>
