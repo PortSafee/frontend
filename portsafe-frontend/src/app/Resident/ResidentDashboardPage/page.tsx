@@ -20,6 +20,7 @@ const ResidentDashboard: React.FC = () => {
   const [historico, setHistorico] = useState<any[]>([]);
   const [searchText, setSearchText] = useState("");
 
+  // Carrega o morador do localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("morador");
     if (storedUser) {
@@ -28,110 +29,97 @@ const ResidentDashboard: React.FC = () => {
     }
   }, []);
 
-  // Carrega entregas do morador
-  useEffect(() => {
+  // Função central de carregamento
+  const carregarEntregas = async () => {
     const moradorId = morador?.id || morador?.Id;
     if (!moradorId) return;
 
-    const carregarEntregas = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5095/api/Entrega/PorMoradorId?id=${moradorId}`
-        );
+    try {
+      const response = await axios.get(
+        `http://localhost:5095/api/Entrega/PorMoradorId?id=${moradorId}`
+      );
 
-        let lista = response.data;
+      let lista = response.data;
 
-        // Normaliza status para evitar duplicação
-        lista = lista.map((e: any) => {
-          if (e.status === "No armário" || e.status === "Armazenada") e.status = "Armazenada";
-          if (e.status === "AguardandoArmario") e.status = "Na portaria";
-          return e;
-        });
+      // Normaliza status para manter consistência
+      lista = lista.map((e: any) => {
+        if (e.status === "No armário" || e.status === "Armazenada") e.status = "Armazenada";
+        if (e.status === "AguardandoArmario") e.status = "Na portaria";
+        return e;
+      });
 
-        const ativas = lista.filter((e: any) => e.status !== "Retirada");
-        const historicoDb = lista.filter((e: any) => e.status === "Retirada");
+      const ativas = lista.filter((e: any) => e.status !== "Retirada");
+      const historicoDb = lista.filter((e: any) => e.status === "Retirada");
 
-        setEntregas(ativas);
-        setHistorico(historicoDb);
-      } catch (error) {
-        console.error("Erro ao carregar entregas:", error);
-      }
-    };
+      setEntregas(ativas);
+      setHistorico(historicoDb);
 
-    carregarEntregas();
+      // Agora guardamos "lista" como a lista completa
+      setAllDeliveries(lista);
+
+    } catch (error) {
+      console.error("Erro ao carregar entregas:", error);
+    }
+  };
+
+  // Estado para ALL deliveries (ativas + retiradas)
+  const [allDeliveries, setAllDeliveries] = useState<any[]>([]);
+
+  // Carrega quando o morador for definido
+  useEffect(() => {
+    if (morador) carregarEntregas();
   }, [morador]);
 
-const carregarEntregas = async () => {
-  const moradorId = morador?.id || morador?.Id;
-  if (!moradorId) return;
+  // Confirma entrega
+  const confirmarEntrega = async (entrega: any) => {
+    try {
+      if (entrega.status === "Armazenada") {
+        await axios.post(`http://localhost:5095/api/Entrega/ConfirmarFechamento`, {
+          entregaId: entrega.id,
+        });
+      } else if (entrega.status === "Na portaria") {
+        await axios.put(
+          `http://localhost:5095/api/Entrega/ConfirmarRetirada?entregaId=${entrega.id}`
+        );
+      }
 
-  try {
-    const response = await axios.get(`http://localhost:5095/api/Entrega/PorMoradorId?id=${moradorId}`);
-    let lista = response.data;
-
-    // Normaliza status
-    lista = lista.map((e: any) => {
-      if (e.status === "No armário" || e.status === "Armazenada") e.status = "Armazenada";
-      if (e.status === "AguardandoArmario") e.status = "Na portaria";
-      return e;
-    });
-
-    const ativas = lista.filter((e: any) => e.status !== "Retirada");
-    const historicoDb = lista.filter((e: any) => e.status === "Retirada");
-
-    setEntregas(ativas);
-    setHistorico(historicoDb);
-  } catch (error) {
-    console.error("Erro ao carregar entregas:", error);
-  }
-};
-
-const confirmarEntrega = async (entrega: any) => {
-  try {
-    if (entrega.status === "Armazenada") {
-      await axios.post(`http://localhost:5095/api/Entrega/ConfirmarFechamento`, { entregaId: entrega.id });
-    } else if (entrega.status === "Na portaria") {
-      await axios.put(`http://localhost:5095/api/Entrega/ConfirmarRetirada?entregaId=${entrega.id}`);
+      await carregarEntregas();
+      alert("Entrega confirmada com sucesso!");
+    } catch (error) {
+      console.error("Erro ao confirmar entrega:", error);
+      alert("Falha ao confirmar entrega.");
     }
+  };
 
-    // Atualiza a lista do backend
-    await carregarEntregas();
-    alert("Entrega confirmada com sucesso!");
-  } catch (error) {
-    console.error("Erro ao confirmar entrega:", error);
-    alert("Falha ao confirmar entrega.");
-  }
-};
+  // -----------------------------
+  // 📌 CARDS: ENTREGAS HOJE e MÊS — agora usam *allDeliveries*
+  // -----------------------------
+  const hoje = new Date().toISOString().split("T")[0];
 
-
-
-
-  // Filtros e buscas
-  const entregasHoje = entregas.filter((e) => {
-    const entregaDate = new Date(e.dataHoraRegistro);
-    const today = new Date();
-    return (
-      entregaDate.getDate() === today.getDate() &&
-      entregaDate.getMonth() === today.getMonth() &&
-      entregaDate.getFullYear() === today.getFullYear()
-    );
+  const entregasHoje = allDeliveries.filter((e) => {
+    const data = e.dataHoraRegistro?.split("T")[0];
+    return data === hoje;
   });
 
+  const mesAtual = new Date().getMonth();
+  const anoAtual = new Date().getFullYear();
+
+  const entregasMes = allDeliveries.filter((e) => {
+    const data = new Date(e.dataHoraRegistro);
+    return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
+  });
+
+  // Ativas
   const entregasAguardando = entregas.filter(
     (e) => e.status === "Na portaria" || e.status === "Armazenada"
   );
 
-  const entregasMes = entregas.filter((e) => {
-    const entregaDate = new Date(e.dataHoraRegistro);
-    const today = new Date();
-    return entregaDate.getMonth() === today.getMonth() &&
-      entregaDate.getFullYear() === today.getFullYear();
-  });
-
-  const entregasFiltradas = entregas.filter((e) =>
-    e.enderecoGerado?.toLowerCase().includes(searchText.toLowerCase()) ||
-    e.codigoEntrega?.toLowerCase().includes(searchText.toLowerCase())
+  const entregasFiltradas = entregas.filter(
+    (e) =>
+      e.enderecoGerado?.toLowerCase().includes(searchText.toLowerCase()) ||
+      e.codigoEntrega?.toLowerCase().includes(searchText.toLowerCase())
   );
+
 
   return (
     <div className="min-h-screen bg-[#131826] text-white overflow-x-hidden">
