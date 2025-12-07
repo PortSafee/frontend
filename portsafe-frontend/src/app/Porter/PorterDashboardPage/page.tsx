@@ -63,6 +63,11 @@ const PorterDashboard: React.FC = () => {
   );
   const ultimaEntrega = entregas[entregas.length - 1];
 
+  const [searchText, setSearchText] = useState("");
+  const entregasFiltradas = entregas.filter((entrega) =>
+    entrega.nomeDestinatario.toLowerCase().includes(searchText.toLowerCase())
+  );
+
 
   return (
     <div className="min-h-screen bg-[#131826] text-white overflow-x-hidden">
@@ -122,41 +127,53 @@ const PorterDashboard: React.FC = () => {
           </div>
 
           {/* Botão Registro Manual */}
-              <button className=" flex items-center justify-center gap-5 px-3 py-1.5 rounded-2xl bg-gradient-to-r from-[#23538B] to-[#116380]  text-white text-xs font-medium shadow-md w-[23.5vw] hover:opacity-80 transition-opacity">
-                <div className="flex items-center justify-center bg-gradient-to-r from-[#328BF1] to-[#0EAED9] rounded-md p-2">
-                  <LuPlus className="w-5 h-5 " />
-                </div>
-                <div className="flex flex-col justify-center">
-                  <span className="font-semibold text-xl leading-none">Registro Manual</span>
-                  <span className="text-xs font-extralight leading-none mt-1">Nova entrega na portaria</span>
-                </div>
-              </button>
+          <button className=" flex items-center justify-center gap-5 px-3 py-1.5 rounded-2xl bg-gradient-to-r from-[#23538B] to-[#116380]  text-white text-xs font-medium shadow-md w-[23.5vw] hover:opacity-80 transition-opacity">
+            <div className="flex items-center justify-center bg-gradient-to-r from-[#328BF1] to-[#0EAED9] rounded-md p-2">
+              <LuPlus className="w-5 h-5 " />
+            </div>
+            <div className="flex flex-col justify-center">
+              <span className="font-semibold text-xl leading-none">Registro Manual</span>
+              <span className="text-xs font-extralight leading-none mt-1">Nova entrega na portaria</span>
+            </div>
+          </button>
 
           <div className="bg-[#2A2F3B] border border-[#012032] rounded-2xl p-4 sm:p-6 space-y-4 max-h-[60vh] sm:max-h-[65vh] overflow-y-auto">
             <h2 className="title font-marmelad !text-lg sm:!text-2xl font-semibold text-white mb-4">
               Entregas Hoje
             </h2>
             <p className="text-sm text-gray-400">Monitor todas as entregas do condomínio em tempo real</p>
+
+            {/* Campo de busca */}
             <div className="relative">
               <input
                 type="text"
                 placeholder="Busque por morador"
+                value={searchText} // estado controlado
+                onChange={(e) => setSearchText(e.target.value)}
                 className="w-full bg-[#3F434E] border border-[#012032] rounded-xl p-3 pl-10 text-sm text-white focus:outline-none"
               />
               <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             </div>
 
-            {entregas.length === 0 && <p className="text-gray-400 text-sm">Nenhuma entrega armazenada.</p>}
+            {/* Lista de entregas filtradas */}
+            {entregasFiltradas.length === 0 && (
+              <p className="text-gray-400 text-sm">Nenhuma entrega armazenada.</p>
+            )}
 
-            {entregas.map((entrega: any) => (
-              <div key={entrega.id} className="bg-[#3F434E] border border-[#012032] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#484c56] transition-colors">
+            {entregasFiltradas.map((entrega: any) => (
+              <div
+                key={entrega.id}
+                className="bg-[#3F434E] border border-[#012032] rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-[#484c56] transition-colors"
+              >
                 <div className="flex items-start sm:items-center gap-3 flex-1">
                   <div className="w-10 h-10 bg-[#F28C38] rounded-lg flex items-center justify-center flex-shrink-0">
                     <FiBox className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                      <span className="text-sm sm:text-base font-bold text-white truncate">{entrega.nomeDestinatario}</span>
+                      <span className="text-sm sm:text-base font-bold text-white truncate">
+                        {entrega.nomeDestinatario}
+                      </span>
                       <span className="px-2 py-0.5 bg-[#F28C38] text-white text-xs sm:text-sm rounded-full font-medium flex-shrink-0">
                         Aguardando
                       </span>
@@ -164,7 +181,9 @@ const PorterDashboard: React.FC = () => {
                     <p className="text-xs sm:text-sm text-[#D7D7D7] truncate">
                       {entrega.endereco} – Entregador: {entrega.entregador}
                     </p>
-                    <p className="text-xs text-[#D7D7D7] truncate">{entrega.codigoRastreio} – Horário: {entrega.horario}</p>
+                    <p className="text-xs text-[#D7D7D7] truncate">
+                      {entrega.codigoRastreio} – Horário: {entrega.horario}
+                    </p>
                   </div>
                 </div>
 
@@ -185,6 +204,7 @@ const PorterDashboard: React.FC = () => {
               </div>
             ))}
           </div>
+
         </div>
       </div>
     </div>
