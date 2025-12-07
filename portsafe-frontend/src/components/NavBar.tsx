@@ -38,7 +38,7 @@ export default function Navbar({
           <>
           <div className="hidden sm:flex items-center gap-2 hover:text-[#328BF1] transition cursor-pointer">
             <BsChatDots className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span onClick={onChatClick} className="hidden sm:inline">Assistente</span>
+            <span onClick={onChatClick} className="hidden sm:inline">SafeBoot</span>
             </div>
           </>
         )}
