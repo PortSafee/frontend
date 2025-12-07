@@ -127,7 +127,9 @@ const PorterDashboard: React.FC = () => {
           </div>
 
           {/* Botão Registro Manual */}
-          <button className=" flex items-center justify-center gap-5 px-3 py-1.5 rounded-2xl bg-gradient-to-r from-[#23538B] to-[#116380]  text-white text-xs font-medium shadow-md w-[23.5vw] hover:opacity-80 transition-opacity">
+          <button 
+          onClick={() => router.push("/Porter/ManualRegistrationPage")}
+          className=" flex items-center justify-center gap-5 px-3 py-1.5 rounded-2xl bg-gradient-to-r from-[#23538B] to-[#116380]  text-white text-xs font-medium shadow-md w-[23.5vw] hover:opacity-80 transition-opacity">
             <div className="flex items-center justify-center bg-gradient-to-r from-[#328BF1] to-[#0EAED9] rounded-md p-2">
               <LuPlus className="w-5 h-5 " />
             </div>
