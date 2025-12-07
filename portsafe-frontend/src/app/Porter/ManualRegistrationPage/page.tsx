@@ -6,7 +6,6 @@ import Logo from "@/assets/logo_portsafe.png";
 
 const ManualRegisterPage: React.FC = () => {
   const [nomeEntregador, setNomeEntregador] = useState("");
-  const [empresa, setEmpresa] = useState("");
   const [nomeDestinatario, setNomeDestinatario] = useState("");
 
   // Campos dinâmicos
@@ -17,6 +16,8 @@ const ManualRegisterPage: React.FC = () => {
 
   const [telefone, setTelefone] = useState("");
   const [observacoes, setObservacoes] = useState("");
+
+  const [tipoEntrega, setTipoEntrega] = useState<"Padrão" | "Perecível" | "Volumosa">("Padrão");
 
   const [loading, setLoading] = useState(false);
 
@@ -31,14 +32,12 @@ const ManualRegisterPage: React.FC = () => {
       return false;
     }
     if (tipoUnidade === "Casa") {
-      // DTO exige CEP para Casa
       const cepOnlyDigits = (cepCasa || "").replace(/\D/g, "");
       if (cepOnlyDigits.length !== 8) {
         alert("Para 'Casa' informe um CEP válido com 8 dígitos (somente números).");
         return false;
       }
     } else {
-      // Apartamento: deve enviar pelo menos número ou torre/bloco
       if (!apartamento.trim() && !torre.trim()) {
         alert("Para 'Apartamento' informe número do apto ou torre.");
         return false;
@@ -48,7 +47,7 @@ const ManualRegisterPage: React.FC = () => {
   };
 
   // =======================================================================
-  // 1️⃣ REGISTRAR ENTREGA — VALIDAR + SOLICITAR ARMÁRIO
+  // 1️⃣ REGISTRAR ENTREGA — VALIDAR + SOLICITAR ARMÁRIO OU NA PORTARIA
   // =======================================================================
   const handleRegistrar = async () => {
     try {
@@ -56,23 +55,23 @@ const ManualRegisterPage: React.FC = () => {
 
       setLoading(true);
 
-      // Monta o payload exatamente conforme ValidarDestinatarioRequestDTO
+      // Monta o payload para validar destinatário
       const bodyValidacao =
         tipoUnidade === "Casa"
           ? {
-            nomeDestinatario: nomeDestinatario.trim(),
-            tipoUnidade: "Casa",
-            cep: cepCasa.replace(/\D/g, ""), // envia somente dígitos
-            numero: null,
-            torre: null
-          }
+              nomeDestinatario: nomeDestinatario.trim(),
+              tipoUnidade: "Casa",
+              cep: cepCasa.replace(/\D/g, ""),
+              numero: null,
+              torre: null
+            }
           : {
-            nomeDestinatario: nomeDestinatario.trim(),
-            tipoUnidade: "Apartamento",
-            numero: apartamento ? apartamento.trim() : null,
-            torre: torre ? torre.trim() : null,
-            cep: null
-          };
+              nomeDestinatario: nomeDestinatario.trim(),
+              tipoUnidade: "Apartamento",
+              numero: apartamento ? apartamento.trim() : null,
+              torre: torre ? torre.trim() : null,
+              cep: null
+            };
 
       console.log("Enviando payload ValidarDestinatario:", bodyValidacao);
 
@@ -83,9 +82,6 @@ const ManualRegisterPage: React.FC = () => {
         body: JSON.stringify(bodyValidacao)
       });
 
-
-
-      // Trata respostas não-ok com segurança
       let validarData: any = null;
       try {
         validarData = await validarResp.json();
@@ -95,19 +91,9 @@ const ManualRegisterPage: React.FC = () => {
         alert(`Erro ao validar destinatário: ${txt || validarResp.status}`);
         return;
       }
-      console.log("VALIDAR DATA COMPLETO", validarData);
-      console.log("Resposta ValidarDestinatario:", validarResp.status, validarData);
 
-      if (!validarResp.ok) {
-        // servidor retornou 400/422/..., exibir mensagem retornada
-        const msg = validarData?.Message || validarData?.mensagem || validarData?.mensagemErro || JSON.stringify(validarData);
-        alert(msg || "Erro de validação no servidor.");
-        return;
-      }
-
-      // backend DTO retorna Validado + DadosEncontrados
-      if (!validarData.validado) {
-        alert(validarData.mensagem || "Morador não encontrado.");
+      if (!validarResp.ok || !validarData.validado) {
+        alert(validarData?.mensagem || "Morador não encontrado.");
         return;
       }
 
@@ -118,49 +104,51 @@ const ManualRegisterPage: React.FC = () => {
         return;
       }
 
-      // 2) Solicitar armário (payload completo EXIGIDO pelo backend)
-      const solicitarPayload = {
-        unidadeId: unidadeId,
-        tokenValidacao: validarData.tokenValidacao, // ⚠ OBRIGATÓRIO
-        nomeEntregador: nomeEntregador.trim(),
-        empresa: empresa.trim(),
-        observacoes: observacoes.trim(),
-        telefone: validarData.dadosEncontrados?.telefoneWhatsApp || telefone.trim()
-      };
+      // 2) Lógica do tipo de entrega
+      if (tipoEntrega === "Padrão") {
+        // Entrega padrão → solicita armário
+        const solicitarPayload = {
+          unidadeId: unidadeId,
+          tokenValidacao: validarData.tokenValidacao,
+          nomeEntregador: nomeEntregador.trim(),
+          observacoes: observacoes.trim(),
+          telefone: validarData.dadosEncontrados?.telefoneWhatsApp || telefone.trim()
+        };
 
-      console.log("Payload SolicitarArmario:", solicitarPayload);
+        console.log("Payload SolicitarArmario:", solicitarPayload);
 
-      const solicitarResp = await fetch("http://localhost:5095/api/Entrega/SolicitarArmario", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(solicitarPayload)
-      });
+        const solicitarResp = await fetch("http://localhost:5095/api/Entrega/SolicitarArmario", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(solicitarPayload)
+        });
 
+        let solicitarData: any = null;
+        try {
+          solicitarData = await solicitarResp.json();
+        } catch (e) {
+          const txt = await solicitarResp.text();
+          console.error("Resposta inválida do servidor (SolicitarArmario):", solicitarResp.status, txt);
+          alert(`Erro ao solicitar armário: ${txt || solicitarResp.status}`);
+          return;
+        }
 
-      let solicitarData: any = null;
-      try {
-        solicitarData = await solicitarResp.json();
-      } catch (e) {
-        const txt = await solicitarResp.text();
-        console.error("Resposta inválida do servidor (SolicitarArmario):", solicitarResp.status, txt);
-        alert(`Erro ao solicitar armário: ${txt || solicitarResp.status}`);
-        return;
+        if (!solicitarResp.ok) {
+          const msg = solicitarData?.mensagem || solicitarData?.Message || JSON.stringify(solicitarData);
+          alert(msg || "Não há armários disponíveis.");
+          return;
+        }
+
+        setDadosArmario(solicitarData);
+      } else {
+        // Entrega perecível ou volumosa → registra "Na Portaria"
+        setDadosArmario({
+          sucesso: true,
+          status: "Na Portaria",
+          numeroArmario: null
+        });
       }
 
-      console.log("Resposta SolicitarArmario:", solicitarResp.status, solicitarData);
-
-      if (!solicitarResp.ok) {
-        const msg = solicitarData?.mensagem || solicitarData?.Message || JSON.stringify(solicitarData);
-        alert(msg || "Não há armários disponíveis.");
-        return;
-      }
-
-      if (!solicitarData.sucesso && !solicitarData.NumeroArmario && !solicitarData.numeroArmario) {
-        // caso o DTO tenha outro formato, logamos
-        console.warn("Formato inesperado de resposta SolicitarArmario:", solicitarData);
-      }
-
-      setDadosArmario(solicitarData);
       setEtapa("fechamento");
     } catch (err) {
       console.error("Erro em handleRegistrar:", err);
@@ -177,56 +165,51 @@ const ManualRegisterPage: React.FC = () => {
     try {
       setLoading(true);
 
-      if (!dadosArmario?.entregaId && !dadosArmario?.EntregaId && !dadosArmario?.entregaID) {
+      if (!dadosArmario) {
         alert("ID da entrega não encontrado. Refaça o processo.");
         return;
       }
 
       const entregaId = dadosArmario.entregaId ?? dadosArmario.EntregaId ?? dadosArmario.entregaID;
 
-      const resp = await fetch("http://localhost:5095/api/Entrega/ConfirmarFechamento", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entregaId })
-      });
+      if (dadosArmario.status === "Na Portaria") {
+        alert("Entrega registrada com sucesso na Portaria!");
+      } else {
+        const resp = await fetch("http://localhost:5095/api/Entrega/ConfirmarFechamento", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ entregaId })
+        });
 
-      let data: any = null;
-      try {
-        data = await resp.json();
-      } catch {
-        const txt = await resp.text();
-        console.error("Resposta inválida do servidor (ConfirmarFechamento):", resp.status, txt);
-        alert(`Erro ao confirmar fechamento: ${txt || resp.status}`);
-        return;
+        let data: any = null;
+        try {
+          data = await resp.json();
+        } catch {
+          const txt = await resp.text();
+          console.error("Resposta inválida do servidor (ConfirmarFechamento):", resp.status, txt);
+          alert(`Erro ao confirmar fechamento: ${txt || resp.status}`);
+          return;
+        }
+
+        if (!resp.ok || !data.sucesso) {
+          alert(data?.mensagem || "Erro ao confirmar fechamento.");
+          return;
+        }
+
+        alert("Entrega registrada e morador notificado com sucesso!");
       }
 
-      console.log("Resposta ConfirmarFechamento:", resp.status, data);
-
-      if (!resp.ok) {
-        const msg = data?.mensagem || data?.Message || JSON.stringify(data);
-        alert(msg || "Erro ao confirmar fechamento.");
-        return;
-      }
-
-      if (!data.sucesso) {
-        alert(data.mensagem || "Erro ao confirmar fechamento.");
-        return;
-      }
-
-      alert("Entrega registrada e morador notificado com sucesso!");
-
-      // Resetar
+      // Resetar formulário
       setEtapa("form");
       setDadosArmario(null);
-
       setNomeEntregador("");
-      setEmpresa("");
       setNomeDestinatario("");
       setApartamento("");
       setTelefone("");
       setObservacoes("");
       setTorre("");
       setCepCasa("");
+      setTipoEntrega("Padrão");
     } catch (err) {
       console.error("Erro em handleConfirmarFechamento:", err);
       alert("Erro ao confirmar fechamento.");
@@ -248,45 +231,50 @@ const ManualRegisterPage: React.FC = () => {
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 px-4 sm:px-6 md:px-10 py-6 md:py-0 overflow-y-auto">
         <div className="w-full max-w-[600px] bg-[#ffffff18] border-2 border-[#606060] rounded-3xl text-white text-center shadow-xl">
           <div className="flex flex-col items-center justify-center p-8 bg-[#084571] rounded-t-3xl min-h-[150px]">
-  <h1 className="title font-marmelad text-2xl">Registro Manual</h1>
-  <h3 className="mt-2">Preencha os dados de entrega</h3>
-</div>
-
+            <h1 className="title font-marmelad text-2xl">Registro Manual</h1>
+            <h3 className="mt-2">Preencha os dados de entrega</h3>
+          </div>
 
           {etapa === "form" && (
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div className="flex flex-col">
                   <p className="text-left mt-2 pl-1">Nome do Entregador</p>
-                  <Input 
-                  placeholder="Digite o nome do entregador" 
-                  value={nomeEntregador} 
-                  onChange={(e) => 
-                  setNomeEntregador(e.target.value)} 
-                  className="h-8 pl-2"
+                  <Input
+                    placeholder="Digite o nome do entregador"
+                    value={nomeEntregador}
+                    onChange={(e) => setNomeEntregador(e.target.value)}
+                    className="h-8 pl-2"
                   />
 
                   <p className="text-left mt-4 pl-1">Nome do Morador</p>
-                  <Input 
-                  placeholder="Digite o nome do morador" 
-                  value={nomeDestinatario} 
-                  onChange={(e) => 
-                  setNomeDestinatario(e.target.value)} 
-                  className="h-8 pl-2"
+                  <Input
+                    placeholder="Digite o nome do morador"
+                    value={nomeDestinatario}
+                    onChange={(e) => setNomeDestinatario(e.target.value)}
+                    className="h-8 pl-2"
                   />
                 </div>
 
-                <div className="flex flex-col">
-                  <p className="text-left mt-2 pl-1">Empresa</p>
-                  <Input 
-                  placeholder="Digite o nome da empresa" 
-                  value={empresa} 
-                  onChange={(e) => setEmpresa(e.target.value)} 
-                  className="h-8 pl-2"
-                  />
+                <div className="flex flex-col">                 
+
+                  <p className="text-left mt-2 pl-1">Tipo de Entrega</p>
+                  <select
+                    className="bg-[#333B40] border border-[#606060] h-8 rounded-xl px-3 py-1 text-white"
+                    value={tipoEntrega}
+                    onChange={(e) => setTipoEntrega(e.target.value as any)}
+                  >
+                    <option value="Padrão">Padrão</option>
+                    <option value="Perecível">Perecível</option>
+                    <option value="Volumosa">Volumosa</option>
+                  </select>
 
                   <p className="text-left mt-4 pl-1">Tipo de Unidade</p>
-                  <select className="bg-[#333B40] border border-[#606060] h-8 rounded-xl px-3 py-1 text-white" value={tipoUnidade} onChange={(e) => setTipoUnidade(e.target.value as any)}>
+                  <select
+                    className="bg-[#333B40] border border-[#606060] h-8 rounded-xl px-3 py-1 text-white"
+                    value={tipoUnidade}
+                    onChange={(e) => setTipoUnidade(e.target.value as any)}
+                  >
                     <option value="Apartamento">Apartamento</option>
                     <option value="Casa">Casa</option>
                   </select>
@@ -296,20 +284,21 @@ const ManualRegisterPage: React.FC = () => {
                   <>
                     <div className="flex flex-col">
                       <p className="text-left mt-2 pl-1">Apartamento (número)</p>
-                      <Input 
-                      placeholder="Ex: 1205" 
-                      value={apartamento} 
-                      onChange={(e) => setApartamento(e.target.value)} 
-                      className="h-8 pl-2"
+                      <Input
+                        placeholder="Ex: 1205"
+                        value={apartamento}
+                        onChange={(e) => setApartamento(e.target.value)}
+                        className="h-8 pl-2"
                       />
                     </div>
 
                     <div className="flex flex-col">
                       <p className="text-left mt-2 pl-1">Torre</p>
-                      <Input 
-                      placeholder="Ex: Torre A" 
-                      value={torre} onChange={(e) => setTorre(e.target.value)} 
-                      className="h-8 pl-2"
+                      <Input
+                        placeholder="Ex: Torre A"
+                        value={torre}
+                        onChange={(e) => setTorre(e.target.value)}
+                        className="h-8 pl-2"
                       />
                     </div>
                   </>
@@ -318,48 +307,62 @@ const ManualRegisterPage: React.FC = () => {
                 {tipoUnidade === "Casa" && (
                   <div className="col-span-2 flex flex-col">
                     <p className="text-left mt-2 pl-1">CEP da Casa (somente números)</p>
-                    <Input 
-                    placeholder="Ex: 18000000" 
-                    value={cepCasa} 
-                    onChange={(e) => setCepCasa(e.target.value)} 
-                    className="h-8 pl-2"
+                    <Input
+                      placeholder="Ex: 18000000"
+                      value={cepCasa}
+                      onChange={(e) => setCepCasa(e.target.value)}
+                      className="h-8 pl-2"
                     />
                   </div>
                 )}
 
                 <div className="col-span-2 flex flex-col">
                   <p className="text-left mt-2 pl-1">Telefone do morador</p>
-                  <Input 
-                  placeholder="Digite o telefone do morador" 
-                  value={telefone} 
-                  onChange={(e) => setTelefone(e.target.value)} 
-                  className="h-8 pl-2"
+                  <Input
+                    placeholder="Digite o telefone do morador"
+                    value={telefone}
+                    onChange={(e) => setTelefone(e.target.value)}
+                    className="h-8 pl-2"
                   />
                 </div>
 
                 <div className="col-span-2 flex flex-col">
                   <p className="text-left mt-2 pl-1">Observações</p>
-                  <Input 
-                  placeholder="Observações" 
-                  value={observacoes} 
-                  onChange={(e) => setObservacoes(e.target.value)} 
-                  className="h-16 pl-2"
+                  <Input
+                    placeholder="Observações"
+                    value={observacoes}
+                    onChange={(e) => setObservacoes(e.target.value)}
+                    className="h-16 pl-2"
                   />
                 </div>
               </div>
 
-              <Button nome={loading ? "Processando..." : "Registrar Entrega"} estilo="secundary" className="w-full py-3 !text-lg" clique={handleRegistrar} />
+              <Button
+                nome={loading ? "Processando..." : "Registrar Entrega"}
+                estilo="secundary"
+                className="w-full py-3 !text-lg"
+                clique={handleRegistrar}
+              />
             </div>
           )}
 
           {etapa === "fechamento" && dadosArmario && (
             <div className="p-6 flex flex-col space-y-4">
               <p className="text-lg">
-                Armário: <strong>{dadosArmario.numeroArmario ?? dadosArmario.NumeroArmario ?? dadosArmario.numero}</strong>
+                {dadosArmario.status === "Na Portaria"
+                  ? "Status: Na Portaria"
+                  : `Armário: ${dadosArmario.numeroArmario ?? dadosArmario.NumeroArmario ?? dadosArmario.numero}`}
               </p>
-              <p className="text-sm opacity-80">Deposite o pacote e feche a porta.</p>
+              {dadosArmario.status !== "Na Portaria" && (
+                <p className="text-sm opacity-80">Deposite o pacote e feche a porta.</p>
+              )}
 
-              <Button nome={loading ? "Confirmando..." : "Confirmar Fechamento"} estilo="secundary" className="w-full py-3 !text-lg" clique={handleConfirmarFechamento} />
+              <Button
+                nome={loading ? "Confirmando..." : "Confirmar Fechamento"}
+                estilo="secundary"
+                className="w-full py-3 !text-lg"
+                clique={handleConfirmarFechamento}
+              />
             </div>
           )}
         </div>
