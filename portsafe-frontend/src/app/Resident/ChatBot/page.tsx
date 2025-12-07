@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "@/components/NavBar";
 import { IoSend } from "react-icons/io5";
 import Icon_SafeBoot from "@/assets/icons/icon_safeboot.png";
 import Image from "next/image";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+
 
 interface Message {
     text: string;
@@ -13,6 +15,18 @@ interface Message {
 }
 
 const ChatBot: React.FC = () => {
+    const router = useRouter();
+    const [morador, setMorador] = useState<any>(null);
+
+// Carrega o morador do localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem("morador");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setMorador(parsedUser);
+    }
+  }, []);
+
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -83,7 +97,13 @@ const ChatBot: React.FC = () => {
     return (
         <div className="min-h-screen bg-[#131826] text-white overflow-x-hidden">
             {/* Barra de navegação */}
-            <NavBar nome="João Silva" funcao="Painel do Morador" tipoUsuario="morador" />
+            <NavBar
+                    nome={morador?.nome || morador?.Nome || "Morador"}
+                    funcao="Painel do Morador"
+                    tipoUsuario="morador"
+                    onSairClick={() => router.push("/General/LoginPage")}
+                    onChatClick={() => router.push("/Resident/ChatBot")}
+                  />
 
             {/* Container principal */}
             <div className="flex justify-center items-start px-4 sm:px-8 mt-10">
