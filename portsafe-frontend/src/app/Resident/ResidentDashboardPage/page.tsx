@@ -26,8 +26,9 @@ const STATUS_MAP: Record<number, string> = {
   1: "Aguardando Armário",
   2: "Aguardando Retirada",
   3: "Retirada",
-  4: "Na portaria",
-  5: "Armazenada",
+  4: "Armazenada",
+  5: "RedirecionadoPortaria",
+  6: "Na portaria"
 };
 
 const statusParaTexto = (status: number | string) => {
@@ -123,7 +124,7 @@ const ResidentDashboard: React.FC = () => {
   });
 
   const entregasAguardando = entregasAtivas.filter(
-    (e) => e.status === 2 || e.status === 4
+    (e) => e.status === 2 || e.status === 4 || e.status === 6
   );
 
   // Filtro das entregas ativas baseado na busca
@@ -209,22 +210,20 @@ const ResidentDashboard: React.FC = () => {
           <div className="bg-[#2E323C] p-2 rounded-2xl w-fit flex items-center">
             <button
               onClick={() => setIsActive(true)}
-              className={`px-5 py-1.5 text-white font-medium text-sm rounded-2xl ${
-                isActive
+              className={`px-5 py-1.5 text-white font-medium text-sm rounded-2xl ${isActive
                   ? "bg-gradient-to-r from-[#328BF1] to-[#0EAED9]"
                   : "bg-transparent"
-              }`}
+                }`}
             >
               Entregas Ativas
             </button>
 
             <button
               onClick={() => setIsActive(false)}
-              className={`px-5 py-1.5 text-white font-medium text-sm rounded-2xl ${
-                !isActive
+              className={`px-5 py-1.5 text-white font-medium text-sm rounded-2xl ${!isActive
                   ? "bg-gradient-to-r from-[#328BF1] to-[#0EAED9]"
                   : "bg-transparent"
-              }`}
+                }`}
             >
               Histórico
             </button>
@@ -282,8 +281,8 @@ const ResidentDashboard: React.FC = () => {
                         <p className="text-xs text-[#D7D7D7]">
                           {entrega.dataHoraRegistro
                             ? new Date(entrega.dataHoraRegistro).toLocaleString(
-                                "pt-BR"
-                              )
+                              "pt-BR"
+                            )
                             : ""}
                         </p>
 
@@ -343,8 +342,8 @@ const ResidentDashboard: React.FC = () => {
                           Retirada em:{" "}
                           {entrega.dataHoraRetirada
                             ? new Date(
-                                entrega.dataHoraRetirada
-                              ).toLocaleString("pt-BR")
+                              entrega.dataHoraRetirada
+                            ).toLocaleString("pt-BR")
                             : ""}
                         </p>
 
