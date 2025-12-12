@@ -5,6 +5,7 @@ import Logo from "@/assets/logo_portsafe.png";
 import Button from "@/components/Button";
 import { GoCheckCircle } from "react-icons/go";
 import { useRouter } from "next/navigation";
+import api, { API_URL } from "@/config/api";
 import axios from "axios";
 
 const DeliverySuccessPage: React.FC = () => {
@@ -25,8 +26,7 @@ const DeliverySuccessPage: React.FC = () => {
     // Confirmar fechamento no backend
     const confirmarFechamento = async () => {
       try {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5095";
-        await axios.post(`${backendUrl}/api/Entrega/ConfirmarFechamento`, {
+        await api.post(`/api/Entrega/ConfirmarFechamento`, {
           entregaId: parsed.entregaId,
         });
       } catch (err) {

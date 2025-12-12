@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Logo from "@/assets/logo_portsafe.png";
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
+import api, { API_URL } from "@/config/api";
 import axios from "axios";
 
 interface ArmarioResponse {
@@ -37,15 +38,13 @@ const DeliveryInstructionsPage: React.FC = () => {
   const solicitarArmario = async () => {
     try {
       const parsed = JSON.parse(validatedData);
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5095";
 
-      const response = await axios.post<ArmarioResponse>(
-        `${backendUrl}/api/Entrega/SolicitarArmario`,
+      const response = await api.post<ArmarioResponse>(
+        `/api/Entrega/SolicitarArmario`,
         {
           tokenValidacao: tokenValidacao,        // ← ESSENCIAL
           unidadeId: parsed.unidadeId,           // ← ESSENCIAL
-        },
-        { headers: { "Content-Type": "application/json" } }
+        }
       );
 
       if (response.data.sucesso) {

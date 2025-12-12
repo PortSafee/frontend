@@ -6,6 +6,7 @@ import Button from '@/components/Button';
 import Input from '@/components/Input';
 import BackButton from "@/components/BackButton";
 import IconLogo from '@/assets/icons/icon_logo.png';
+import api from '@/config/api';
 import axios from 'axios';
 import Image from 'next/image';
 
@@ -37,7 +38,7 @@ const RegisterPage: React.FC = () => {
   React.useEffect(() => {
     const fetchCondominios = async () => {
       try {
-        const response = await axios.get('/api/Condominio');
+        const response = await api.get('/api/Condominio');
         console.log('Condomínios carregados:', response.data);
         console.log('Primeiro condomínio:', response.data[0]);
         setCondominios(response.data);
@@ -140,10 +141,9 @@ const handleRegister = async () => {
 
   try {
     console.log('Dados enviados:', requestData); // Debug
-    const response = await axios.post(
+    const response = await api.post(
       endpoint,
-      requestData,
-      { headers: { 'Content-Type': 'application/json' } }
+      requestData
     );
 
     if (response.status === 200) {

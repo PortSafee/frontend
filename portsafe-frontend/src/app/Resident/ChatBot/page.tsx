@@ -5,6 +5,7 @@ import NavBar from "@/components/NavBar";
 import { IoSend } from "react-icons/io5";
 import Icon_SafeBoot from "@/assets/icons/icon_safeboot.png";
 import Image from "next/image";
+import api from "@/config/api";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -48,10 +49,8 @@ const ChatBot: React.FC = () => {
 
         try {
             // Envia a mensagem para a API
-            const response = await axios.post('/api/Chatbot/perguntar', {
+            const response = await api.post('/api/Chatbot/perguntar', {
                 mensagem: userMessage,
-            }, {
-                headers: { 'Content-Type': 'application/json' },
             });
 
             // Adiciona resposta do bot

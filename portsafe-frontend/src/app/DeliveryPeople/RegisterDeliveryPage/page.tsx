@@ -7,6 +7,7 @@ import BackButton from "@/components/BackButton";
 import Logo from "@/assets/logo_portsafe.png";
 import { useRouter } from "next/navigation";
 import { BsPeople } from "react-icons/bs";
+import api, { API_URL } from "@/config/api";
 import axios from "axios";
 
 /*Definir Interfaces TypeScript para Payload e Resposta*/
@@ -108,15 +109,9 @@ const RegisterDeliveryPage: React.FC = () => {
         ...(tipoUnidade === "Apartamento" ? { Torre: torre, Numero: numero } : {}),
       };
 
-      const backendUrl =
-        process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5095";
-
-      const response = await axios.post<ValidacaoDestinatarioResponse>(
-        `${backendUrl}/api/Entrega/ValidarDestinatario`,
-        requestData,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
+      const response = await api.post<ValidacaoDestinatarioResponse>(
+        `/api/Entrega/ValidarDestinatario`,
+        requestData
       );
 
       const data = response.data;

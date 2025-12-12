@@ -8,6 +8,7 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
 import { FiBox } from "react-icons/fi";
 import { IoSearchOutline } from "react-icons/io5";
+import api from "@/config/api";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -32,11 +33,17 @@ const ResidentDashboard: React.FC = () => {
   // Função central de carregamento
   const carregarEntregas = async () => {
     const moradorId = morador?.id || morador?.Id;
-    if (!moradorId) return;
+    if (!moradorId) {
+      console.error("Morador ID não encontrado");
+      return;
+    }
+
+    console.log("Buscando entregas para morador ID:", moradorId);
+    console.log("URL da requisição:", `${api.defaults.baseURL}/api/Entrega/PorMoradorId?id=${moradorId}`);
 
     try {
-      const response = await axios.get(
-        `http://localhost:5095/api/Entrega/PorMoradorId?id=${moradorId}`
+      const response = await api.get(
+        `/api/Entrega/PorMoradorId?id=${moradorId}`
       );
 
       let lista = response.data;
@@ -59,7 +66,23 @@ const ResidentDashboard: React.FC = () => {
       setAllDeliveries(lista);
 
     } catch (error) {
-      console.error("Erro ao carregar entregas:", error);
+      if (axios.isAxiosError(error)) {
+        console.error("Erro ao carregar entregas:");
+        console.error("- Status:", error.response?.status);
+        console.error("- URL tentada:", error.config?.url);
+        console.error("- Base URL:", error.config?.baseURL);
+        console.error("- Mensagem:", error.message);
+        console.error("- Dados da resposta:", error.response?.data);
+        
+        if (error.response?.status === 404) {
+          console.error("⚠️ Endpoint não encontrado. Verifique:");
+          console.error("1. Se o backend está rodando em http://localhost:5000");
+          console.error("2. Se o endpoint /api/Entrega/PorMoradorId existe");
+          console.error("3. Se o moradorId está correto:", moradorId);
+        }
+      } else {
+        console.error("Erro desconhecido ao carregar entregas:", error);
+      }
     }
   };
 
@@ -68,19 +91,22 @@ const ResidentDashboard: React.FC = () => {
 
   // Carrega quando o morador for definido
   useEffect(() => {
-    if (morador) carregarEntregas();
+    if (morador) {
+      carregarEntregas();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [morador]);
 
   // Confirma entrega
   const confirmarEntrega = async (entrega: any) => {
     try {
       if (entrega.status === "Armazenada") {
-        await axios.post(`http://localhost:5095/api/Entrega/ConfirmarFechamento`, {
+        await api.post(`/api/Entrega/ConfirmarFechamento`, {
           entregaId: entrega.id,
         });
       } else if (entrega.status === "Na portaria") {
-        await axios.put(
-          `http://localhost:5095/api/Entrega/ConfirmarRetirada?entregaId=${entrega.id}`
+        await api.put(
+          `/api/Entrega/ConfirmarRetirada?entregaId=${entrega.id}`
         );
       }
 

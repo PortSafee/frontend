@@ -6,6 +6,7 @@ import Button from '@/components/Button';
 import Input from '@/components/Input';
 import BackButton from "@/components/BackButton";
 import IconLogo from '@/assets/icons/icon_logo.png';
+import api from '@/config/api';
 import axios from 'axios';
 import { useRouter } from "next/navigation";
 import Image from 'next/image';
@@ -72,10 +73,9 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      const response = await axios.post(
+      const response = await api.post(
         '/api/Auth/Login',
-        { UsernameOrEmail: email, Password: password },
-        { headers: { 'Content-Type': 'application/json' } }
+        { UsernameOrEmail: email, Password: password }
       );
 
       const { usuario, token } = response.data;

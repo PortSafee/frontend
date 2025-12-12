@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import IconLogo from '@/assets/icons/icon_logo.png';
+import api from '@/config/api';
 import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -39,7 +40,7 @@ const ResetPasswordWithCode: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('/api/Auth/RedefinirSenha', {
+      const response = await api.post('/api/Auth/RedefinirSenha', {
         Email: email,
         Token: code,
         NovaSenha: password,

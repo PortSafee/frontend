@@ -10,6 +10,7 @@ import { LuPackage, LuPlus } from "react-icons/lu";
 import { FiAlertTriangle, FiBox, FiSettings } from "react-icons/fi";
 import { IoPeople, IoSearchOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
+import api from "@/config/api";
 import axios from "axios";
 
 const PorterDashboard: React.FC = () => {
@@ -34,7 +35,7 @@ const PorterDashboard: React.FC = () => {
     const fetchEntregas = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:5095/api/Entrega/Armazenadas", {
+        const response = await api.get("/api/Entrega/Armazenadas", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
