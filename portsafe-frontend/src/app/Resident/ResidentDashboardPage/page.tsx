@@ -293,17 +293,12 @@ const ResidentDashboard: React.FC = () => {
                     </div>
 
                     <div className="flex flex-row gap-3">
-                      <Button
-                        nome="Código"
-                        estilo="transparent"
-                        className="!w-28 !h-8 text-[#13A9DB]"
-                      />
 
                       <Button
                         nome="Confirmar"
                         estilo="primary"
                         icon={<IoIosCheckmarkCircleOutline className="w-4 h-4" />}
-                        className="!w-28 !h-8"
+                        className="!w-28 !h-8 mt-2"
                         clique={() => confirmarEntrega(entrega)}
                       />
                     </div>
