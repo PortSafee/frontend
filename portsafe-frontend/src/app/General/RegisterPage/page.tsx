@@ -20,16 +20,16 @@ const RegisterPage: React.FC = () => {
   const [tipoCondominio, setTipoCondominio] = useState('Apartamento');
   const [condominioId, setCondominioId] = useState('');
   const [condominios, setCondominios] = useState<Array<{ id: number; nomeDoCondominio: string; tipo: string }>>([]);
-  
+
   // Campos para Apartamento
   const [bloco, setBloco] = useState('');
   const [numeroApartamento, setNumeroApartamento] = useState('');
-  
+
   // Campos para Casa
   const [rua, setRua] = useState('');
   const [numeroCasa, setNumeroCasa] = useState('');
   const [cep, setCep] = useState('');
-  
+
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -54,127 +54,127 @@ const RegisterPage: React.FC = () => {
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validateCpf = (cpf: string) => cpf.replace(/\D/g, '').length === 11;
 
-const handleRegister = async () => {
-  setError('');
-  setSuccess('');
+  const handleRegister = async () => {
+    setError('');
+    setSuccess('');
 
-  if (!validateEmail(email)) {
-    setError('Formato de email inválido. Use @ e .');
-    return;
-  }
-  
-  // CPF é obrigatório apenas para Morador
-  if (userType !== 'Porteiro' && !validateCpf(cpf)) {
-    setError('CPF deve ter 11 dígitos.');
-    return;
-  }
-  
-  if (password !== confirmPassword) {
-    setError('Senhas não coincidem.');
-    return;
-  }
-  if (!condominioId) {
-    setError('Selecione um condomínio.');
-    return;
-  }
+    if (!validateEmail(email)) {
+      setError('Formato de email inválido. Use @ e .');
+      return;
+    }
 
-  // Validação específica para Morador
-  if (userType !== 'Porteiro') {
-    if (tipoCondominio === 'Apartamento') {
-      if (!bloco || !numeroApartamento) {
-        setError('Preencha o Bloco e o número do Apartamento.');
-        return;
-      }
-    } else {
-      if (!rua || !numeroCasa || !cep) {
-        setError('Preencha a Rua, número da Casa e CEP.');
-        return;
+    // CPF é obrigatório apenas para Morador
+    if (userType !== 'Porteiro' && !validateCpf(cpf)) {
+      setError('CPF deve ter 11 dígitos.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Senhas não coincidem.');
+      return;
+    }
+    if (!condominioId) {
+      setError('Selecione um condomínio.');
+      return;
+    }
+
+    // Validação específica para Morador
+    if (userType !== 'Porteiro') {
+      if (tipoCondominio === 'Apartamento') {
+        if (!bloco || !numeroApartamento) {
+          setError('Preencha o Bloco e o número do Apartamento.');
+          return;
+        }
+      } else {
+        if (!rua || !numeroCasa || !cep) {
+          setError('Preencha a Rua, número da Casa e CEP.');
+          return;
+        }
       }
     }
-  }
 
-  // Define o endpoint conforme o tipo de usuário
-  const endpoint =
-    userType === 'Porteiro'
-      ? '/api/Auth/CadastroPorteiro'
-      : '/api/Auth/Cadastro';
+    // Define o endpoint conforme o tipo de usuário
+    const endpoint =
+      userType === 'Porteiro'
+        ? '/api/Auth/CadastroPorteiro'
+        : '/api/Auth/Cadastro';
 
-  // Monta os dados conforme o tipo de usuário
-  let requestData: Record<string, string | number | object>;
-  
-  if (userType === 'Porteiro') {
-    // Dados simplificados para Porteiro
-    requestData = {
-      nome: name,
-      email: email,
-      senha: password,
-      telefone: phone,
-      condominioId: parseInt(condominioId)
-    };
-  } else {
-    // Dados completos para Morador
-    requestData = {
-      Nome: name,
-      Email: email,
-      Senha: password,
-      Telefone: phone,
-      CPF: cpf.replace(/\D/g, ''),
-      CondominioId: parseInt(condominioId),
-    };
+    // Monta os dados conforme o tipo de usuário
+    let requestData: Record<string, string | number | object>;
 
-    if (tipoCondominio === 'Apartamento') {
-      requestData.DadosApartamento = {
-        TipoUnidade: 'Apartamento',
-        Bloco: bloco,
-        NumeroApartamento: numeroApartamento
+    if (userType === 'Porteiro') {
+      // Dados simplificados para Porteiro
+      requestData = {
+        nome: name,
+        email: email,
+        senha: password,
+        telefone: phone,
+        condominioId: parseInt(condominioId)
       };
     } else {
-      requestData.DadosCasa = {
-        TipoUnidade: 'Casa',
-        Rua: rua,
-        NumeroCasa: numeroCasa,
-        CEP: cep.replace(/\D/g, '')
+      // Dados completos para Morador
+      requestData = {
+        Nome: name,
+        Email: email,
+        Senha: password,
+        Telefone: phone,
+        CPF: cpf.replace(/\D/g, ''),
+        CondominioId: parseInt(condominioId),
       };
-    }
-  }
 
-  try {
-    console.log('Dados enviados:', requestData); // Debug
-    const response = await axios.post(
-      endpoint,
-      requestData,
-      { headers: { 'Content-Type': 'application/json' } }
-    );
+      if (tipoCondominio === 'Apartamento') {
+        requestData.DadosApartamento = {
+          TipoUnidade: 'Apartamento',
+          Bloco: bloco,
+          NumeroApartamento: numeroApartamento
+        };
+      } else {
+        requestData.DadosCasa = {
+          TipoUnidade: 'Casa',
+          Rua: rua,
+          NumeroCasa: numeroCasa,
+          CEP: cep.replace(/\D/g, '')
+        };
+      }
+    }
 
-    if (response.status === 200) {
-      setSuccess(response.data?.Message || 'Cadastro realizado com sucesso!');
-      setName('');
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-      setPhone('');
-      setCpf('');
-      setBloco('');
-      setNumeroApartamento('');
-      setRua('');
-      setNumeroCasa('');
-      setCep('');
-      setUserType('Morador');
+    try {
+      console.log('Dados enviados:', requestData); // Debug
+      const response = await axios.post(
+        endpoint,
+        requestData,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
+      if (response.status === 200) {
+        setSuccess(response.data?.Message || 'Cadastro realizado com sucesso!');
+        setName('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
+        setPhone('');
+        setCpf('');
+        setBloco('');
+        setNumeroApartamento('');
+        setRua('');
+        setNumeroCasa('');
+        setCep('');
+        setUserType('Morador');
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log('Erro completo:', error.response?.data); // Debug detalhado
+        console.log('Status:', error.response?.status);
+        const errorMessage =
+          error.response?.data?.Message || error.response?.data?.message || 'Erro no registro. Tente novamente!';
+        setError(errorMessage);
+        console.error('Erro:', errorMessage);
+      } else {
+        setError('Erro inesperado. Tente novamente!');
+        console.error('Erro inesperado:', error);
+      }
     }
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.log('Erro completo:', error.response?.data); // Debug detalhado
-      console.log('Status:', error.response?.status);
-      const errorMessage =
-        error.response?.data?.Message || error.response?.data?.message || 'Erro no registro. Tente novamente!';
-      setError(errorMessage);
-      console.error('Erro:', errorMessage);
-    } else {
-      setError('Erro inesperado. Tente novamente!');
-      console.error('Erro inesperado:', error);
-    }
-  }
-};
+  };
 
 
   return (
@@ -193,7 +193,9 @@ const handleRegister = async () => {
       )}
 
       {/* Container principal*/}
-      <div className="w-full max-w-[600px] min-w-[300px] bg-[#ffffff26] rounded-3xl text-white text-center mx-4 sm:mx-6 md:mx-auto">
+      <div className="w-full max-w-[600px] min-w-[300px] bg-[#ffffff26] rounded-3xl text-white text-center mx-8 sm:mx-10 md:mx-auto m-10">
+
+
 
         {/* Cabeçalho */}
         <div className="flex items-center justify-between p-10 bg-[#084571] rounded-t-3xl min-h-[150px]">
@@ -232,135 +234,231 @@ const handleRegister = async () => {
           </div>
         )}
 
-        {/* Campos */}
-        <div className="px-4 sm:px-10 md:px-20 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <p className="text-left mt-4 text-lg pl-4">Nome Completo</p>
+{/* Campos */}
+<div className="
+  px-4 
+  sm:px-10 
+  md:px-20 
+  grid 
+  grid-cols-1 
+  sm:grid-cols-2 
+  gap-4
+  w-full
+">
+
+  {/* ===== CONFIGURAÇÃO SE FOR PORTEIRO ===== */}
+  {userType === "Porteiro" ? (
+    <>
+
+      {/* Nome ocupa 2 colunas mesmo no desktop, mas no mobile vira 1 */}
+      <div className="col-span-1 sm:col-span-2">
+        <p className="text-left mt-4 text-lg pl-4">Nome Completo</p>
+        <Input
+          placeholder="Insira seu nome completo"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full h-10 pl-4"
+        />
+      </div>
+
+      {/* Email */}
+      <div className="col-span-1">
+        <p className="text-left text-lg pl-4">E-mail</p>
+        <Input
+          placeholder="Insira aqui seu e-mail"
+          type="text"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full h-10 pl-4"
+        />
+      </div>
+
+      {/* Telefone */}
+      <div className="col-span-1">
+        <p className="text-left text-lg pl-4">Telefone</p>
+        <Input
+          placeholder="(15) 9999-9999"
+          type="text"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className="w-full h-10 pl-4"
+        />
+      </div>
+
+      {/* Senha */}
+      <div className="col-span-1">
+        <p className="text-left text-lg pl-4">Senha</p>
+        <Input
+          placeholder="Insira aqui sua senha"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full h-10 pl-4"
+        />
+      </div>
+
+      {/* Confirmar senha */}
+      <div className="col-span-1">
+        <p className="text-left text-lg pl-4">Confirmar Senha</p>
+        <Input
+          placeholder="Reescreva sua senha"
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="w-full h-10 pl-4"
+        />
+      </div>
+
+    </>
+  ) : (
+    <>
+      {/* ===== CONFIG PADRÃO (NÃO PORTEIRO) ===== */}
+
+      {/* COLUNA ESQUERDA */}
+      <div className="col-span-1">
+
+        <p className="text-left mt-4 text-lg pl-4">Nome Completo</p>
+        <Input
+          placeholder="Insira seu nome completo"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full h-10 pl-4"
+        />
+
+        <p className="text-left mt-4 text-lg pl-4">Senha</p>
+        <Input
+          placeholder="Insira aqui sua senha"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full h-10 pl-4"
+        />
+
+        <p className="text-left mt-4 text-lg pl-4">Telefone</p>
+        <Input
+          placeholder="(15) 9999-9999"
+          type="text"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className="w-full h-10 pl-4"
+        />
+
+        {userType !== 'Porteiro' && tipoCondominio === 'Apartamento' && (
+          <>
+            <p className="text-left mt-4 text-lg pl-4">Bloco</p>
             <Input
-              placeholder="Insira seu nome completo"
+              placeholder="Bloco A, B, C..."
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={bloco}
+              onChange={(e) => setBloco(e.target.value)}
               className="w-full h-10 pl-4"
             />
+          </>
+        )}
+      </div>
 
-            <p className="text-left mt-4 text-lg pl-4">Senha</p>
-            <Input
-              placeholder="Insira aqui sua senha"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full h-10 pl-4"
-            />
+      {/* COLUNA DIREITA */}
+      <div className="col-span-1">
+        <p className="text-left mt-4 text-lg pl-4">E-mail</p>
+        <Input
+          placeholder="Insira aqui seu e-mail"
+          type="text"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full h-10 pl-4"
+        />
 
-            <p className="text-left mt-4 text-lg pl-4">Telefone</p>
+        <p className="text-left mt-4 text-lg pl-4">Confirmar Senha</p>
+        <Input
+          placeholder="Reescreva sua senha"
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="w-full h-10 pl-4"
+        />
+
+        {userType !== 'Porteiro' && (
+          <>
+            <p className="text-left mt-4 text-lg pl-4">CPF</p>
             <Input
-              placeholder="(15) 9999-9999"
+              placeholder="123.456.789-01"
               type="text"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              value={cpf}
+              onChange={(e) => setCpf(e.target.value)}
               className="w-full h-10 pl-4"
             />
 
-            {userType !== 'Porteiro' && (
-              tipoCondominio === 'Apartamento' ? (
-                <>
-                  <p className="text-left mt-4 text-lg pl-4">Bloco</p>
-                  <Input
-                    placeholder="Bloco A, B, C..."
-                    type="text"
-                    value={bloco}
-                    onChange={(e) => setBloco(e.target.value)}
-                    className="w-full h-10 pl-4"
-                  />
-                </>
-              ) : (
-                <>
-                  <p className="text-left mt-4 text-lg pl-4">Rua</p>
-                  <Input
-                    placeholder="Ex: Rua das Flores"
-                    type="text"
-                    value={rua}
-                    onChange={(e) => setRua(e.target.value)}
-                    className="w-full h-10 pl-4"
-                  />
-                </>
-              )
-            )}
-          </div>
-
-          <div>
-            <p className="text-left mt-4 text-lg pl-4">E-mail</p>
-            <Input
-              placeholder="Insira aqui seu e-mail"
-              type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full h-10 pl-4"
-            />
-
-            <p className="text-left mt-4 text-lg pl-4">Confirmar Senha</p>
-            <Input
-              placeholder="Reescreva sua senha"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full h-10 pl-4"
-            />
-
-            {userType !== 'Porteiro' && (
+            {tipoCondominio === 'Apartamento' && (
               <>
-                <p className="text-left mt-4 text-lg pl-4">CPF</p>
+                <p className="text-left mt-4 text-lg pl-4">Apartamento</p>
                 <Input
-                  placeholder="123.456.789-01"
+                  placeholder="Apt 101"
                   type="text"
-                  value={cpf}
-                  onChange={(e) => setCpf(e.target.value)}
+                  value={numeroApartamento}
+                  onChange={(e) => setNumeroApartamento(e.target.value)}
                   className="w-full h-10 pl-4"
                 />
-
-                {tipoCondominio === 'Apartamento' ? (
-                  <>
-                    <p className="text-left mt-4 text-lg pl-4">Apartamento</p>
-                    <Input
-                      placeholder="Apt 101"
-                      type="text"
-                      value={numeroApartamento}
-                      onChange={(e) => setNumeroApartamento(e.target.value)}
-                      className="w-full h-10 pl-4"
-                    />
-                  </>
-                ) : (
-                  <>
-                    <p className="text-left mt-4 text-lg pl-4">Número da Casa</p>
-                    <Input
-                      placeholder="Ex: 123"
-                      type="text"
-                      value={numeroCasa}
-                      onChange={(e) => setNumeroCasa(e.target.value)}
-                      className="w-full h-10 pl-4"
-                    />
-                    <p className="text-left mt-4 text-lg pl-4">CEP</p>
-                    <Input
-                      placeholder="12345-678"
-                      type="text"
-                      value={cep}
-                      onChange={(e) => setCep(e.target.value)}
-                      className="w-full h-10 pl-4"
-                    />
-                  </>
-                )}
               </>
             )}
-          </div>
+          </>
+        )}
+      </div>
+
+      {/* Rua (2 colunas) */}
+      {userType !== 'Porteiro' && tipoCondominio !== 'Apartamento' && (
+        <div className="col-span-1 sm:col-span-2">
+          <p className="text-left text-lg pl-4">Rua</p>
+          <Input
+            placeholder="Ex: Rua das Flores"
+            type="text"
+            value={rua}
+            onChange={(e) => setRua(e.target.value)}
+            className="w-full h-10 pl-4"
+          />
         </div>
+      )}
+
+      {/* Número / CEP */}
+      {userType !== 'Porteiro' && tipoCondominio !== 'Apartamento' && (
+        <>
+          <div className="col-span-1">
+            <p className="text-left text-lg pl-4">Número da Casa</p>
+            <Input
+              placeholder="Ex: 123"
+              type="text"
+              value={numeroCasa}
+              onChange={(e) => setNumeroCasa(e.target.value)}
+              className="w-full h-10 pl-4"
+            />
+          </div>
+
+          <div className="col-span-1">
+            <p className="text-left text-lg pl-4">CEP</p>
+            <Input
+              placeholder="12345-678"
+              type="text"
+              value={cep}
+              onChange={(e) => setCep(e.target.value)}
+              className="w-full h-10 pl-4"
+            />
+          </div>
+        </>
+      )}
+    </>
+  )}
+</div>
+
+
+
 
         <Button
-                nome="Cadastrar "
-                estilo="primary"
-                clique={handleRegister}
-                className='mt-6 mb-3'
-              />
+          nome="Cadastrar "
+          estilo="primary"
+          clique={handleRegister}
+          className='mt-6 mb-3'
+        />
 
         <h2 className="text-gray-400 text-sm mb-3 ">
           Já tem uma conta?
@@ -369,7 +467,7 @@ const handleRegister = async () => {
           Faça login aqui!
         </a>
       </div>
-       <BackButton className="mt-4 font-normal" />
+      <BackButton className=" font-normal" />
     </div>
   );
 };
