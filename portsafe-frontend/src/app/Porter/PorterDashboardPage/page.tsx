@@ -64,8 +64,9 @@ useEffect(() => {
   const fetchEntregas = async () => {
     try {
       const token = localStorage.getItem("token");
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://portsafee-api-ls93.onrender.com";
       const { data } = await axios.get(
-        "http://localhost:5095/api/Entrega/Pendentes",
+        `${apiUrl}/api/Entrega/Pendentes`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

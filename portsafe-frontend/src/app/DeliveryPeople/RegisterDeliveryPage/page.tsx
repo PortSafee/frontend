@@ -110,7 +110,7 @@ const RegisterDeliveryPage: React.FC = () => {
       };
 
       const backendUrl =
-        process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5095";
+        process.env.NEXT_PUBLIC_API_URL || "https://portsafee-api-ls93.onrender.com";
 
       const response = await axios.post<ValidacaoDestinatarioResponse>(
         `${backendUrl}/api/Entrega/ValidarDestinatario`,

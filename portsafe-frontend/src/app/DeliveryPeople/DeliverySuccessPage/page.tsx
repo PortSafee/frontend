@@ -32,7 +32,7 @@ const DeliverySuccessPage: React.FC = () => {
     // Confirmar fechamento no backend
     const confirmarFechamento = async () => {
       try {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5095";
+        const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://portsafee-api-ls93.onrender.com";
         await axios.post(`${backendUrl}/api/Entrega/ConfirmarFechamento`, {
           entregaId: parsed.entregaId,
         });

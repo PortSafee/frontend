@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:5095/api/:path*',
+        destination: 'https://portsafee-api-ls93.onrender.com/api/:path*',
       },
     ];
   },

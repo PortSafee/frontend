@@ -79,8 +79,9 @@ const ResidentDashboard: React.FC = () => {
     if (!id) return;
 
     try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://portsafee-api-ls93.onrender.com";
       const { data } = await axios.get(
-        `http://localhost:5095/api/Entrega/PorMoradorId?id=${id}&t=${Date.now()}`
+        `${apiUrl}/api/Entrega/PorMoradorId?id=${id}&t=${Date.now()}`
       );
 
       const lista = (data ?? []).map(normalizarEntrega);
@@ -99,8 +100,9 @@ const ResidentDashboard: React.FC = () => {
       if (![2, 4, 5].includes(entrega.status))
         return alert("Esta entrega já foi retirada.");
 
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://portsafee-api-ls93.onrender.com";
       await axios.put(
-        `http://localhost:5095/api/Entrega/ConfirmarRetirada?entregaId=${entrega.Id}`
+        `${apiUrl}/api/Entrega/ConfirmarRetirada?entregaId=${entrega.Id}`
       );
 
       await carregarEntregas();
