@@ -115,7 +115,27 @@ const LoginPage: React.FC = () => {
 
     } catch (error) {
       console.error("Erro no login:", error);
-      setError("Email ou senha inválidos.");
+      
+      if (axios.isAxiosError(error)) {
+        // Erro 401 - credenciais inválidas
+        if (error.response?.status === 401) {
+          setError("Email ou senha inválidos.");
+        } 
+        // Outros erros do backend
+        else if (error.response?.data?.Message || error.response?.data?.message) {
+          setError(error.response.data.Message || error.response.data.message);
+        }
+        // Erro de rede
+        else if (error.message.includes('Network Error')) {
+          setError("Erro de conexão. Verifique sua internet.");
+        }
+        // Erro genérico
+        else {
+          setError("Erro ao fazer login. Tente novamente.");
+        }
+      } else {
+        setError("Erro inesperado. Tente novamente.");
+      }
     }
   };
 
