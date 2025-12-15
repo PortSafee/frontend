@@ -85,8 +85,7 @@ const ManualRegisterPage: React.FC = () => {
             };
 
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://portsafee-api-ls93.onrender.com";
-      const validarResp = await fetch(`${apiUrl}/api/Entrega/ValidarDestinatario`, {
+      const validarResp = await fetch("http://localhost:5095/api/Entrega/ValidarDestinatario", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bodyValidacao),
@@ -118,7 +117,7 @@ const ManualRegisterPage: React.FC = () => {
 };
 
 
-      const acionarResp = await fetch(`${apiUrl}/api/Entrega/AcionarPortaria`, {
+      const acionarResp = await fetch("http://localhost:5095/api/Entrega/AcionarPortaria", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(acionarPayload),

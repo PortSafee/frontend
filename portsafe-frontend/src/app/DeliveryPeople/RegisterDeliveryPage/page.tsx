@@ -109,11 +109,8 @@ const RegisterDeliveryPage: React.FC = () => {
         ...(tipoUnidade === "Apartamento" ? { Torre: torre, Numero: numero } : {}),
       };
 
-      const backendUrl =
-        process.env.NEXT_PUBLIC_API_URL || "https://portsafee-api-ls93.onrender.com";
-
       const response = await axios.post<ValidacaoDestinatarioResponse>(
-        `${backendUrl}/api/Entrega/ValidarDestinatario`,
+        "http://localhost:5095/api/Entrega/ValidarDestinatario",
         requestData,
         {
           headers: { "Content-Type": "application/json" },

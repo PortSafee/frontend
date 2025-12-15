@@ -38,10 +38,8 @@ const DeliveryInstructionsPage: React.FC = () => {
   const solicitarArmario = async () => {
     try {
       const parsed = JSON.parse(validatedData);
-      const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://portsafee-api-ls93.onrender.com";
-
       const response = await axios.post<ArmarioResponse>(
-        `${backendUrl}/api/Entrega/SolicitarArmario`,
+        "http://localhost:5095/api/Entrega/SolicitarArmario",
         {
           tokenValidacao: tokenValidacao,        // ← ESSENCIAL
           unidadeId: parsed.unidadeId,           // ← ESSENCIAL
