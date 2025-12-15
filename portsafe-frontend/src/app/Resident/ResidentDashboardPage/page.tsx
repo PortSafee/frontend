@@ -97,7 +97,7 @@ const ResidentDashboard: React.FC = () => {
   // Função para confirmar retirada
   const confirmarEntrega = async (entrega: UIEntrega) => {
     try {
-      if (![2, 4, 5].includes(entrega.status))
+      if (![2, 4, 5, 6].includes(entrega.status))
         return alert("Esta entrega já foi retirada.");
 
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://portsafee-api-ls93.onrender.com";
@@ -107,8 +107,14 @@ const ResidentDashboard: React.FC = () => {
 
       await carregarEntregas();
       alert("Entrega confirmada com sucesso!");
-    } catch {
-      alert("Erro ao confirmar entrega.");
+    } catch (error) {
+      console.error("Erro ao confirmar entrega:", error);
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.Message || error.response?.data?.message || "Erro ao confirmar entrega.";
+        alert(errorMessage);
+      } else {
+        alert("Erro ao confirmar entrega.");
+      }
     }
   };
 
