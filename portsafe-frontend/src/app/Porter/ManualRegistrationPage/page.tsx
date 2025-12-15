@@ -4,6 +4,17 @@ import React, { useState } from "react";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Logo from "@/assets/logo_portsafe.png";
+import Image from "next/image";
+
+interface DadosArmario {
+  sucesso: boolean;
+  status: string;
+  entregaId: number | null;
+  raw: unknown;
+  numeroArmario?: number;
+  NumeroArmario?: number;
+  numero?: number;
+}
 
 const ManualRegisterPage: React.FC = () => {
   const [nomeEntregador, setNomeEntregador] = useState("");
@@ -23,7 +34,7 @@ const ManualRegisterPage: React.FC = () => {
 
   // Etapas
   const [etapa, setEtapa] = useState<"form" | "fechamento">("form");
-  const [dadosArmario, setDadosArmario] = useState<any>(null);
+  const [dadosArmario, setDadosArmario] = useState<DadosArmario | null>(null);
 
   const validarCamposLocais = () => {
     if (!nomeDestinatario.trim()) {
@@ -169,7 +180,7 @@ const ManualRegisterPage: React.FC = () => {
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134] overflow-x-hidden">
       {/* Lado esquerdo */}
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 text-center p-6">
-        <img src={Logo.src} alt="Logo PortSafe" className="w-40 sm:w-56 md:w-72 lg:w-80 mb-4" />
+        <Image src={Logo} alt="Logo PortSafe" width={320} height={320} className="w-40 sm:w-56 md:w-72 lg:w-80 mb-4" />
         <p className="text-white text-base sm:text-lg md:text-2xl leading-snug">
           Sistema de Entregas do Condomínio
         </p>
@@ -211,7 +222,7 @@ const ManualRegisterPage: React.FC = () => {
                   <select
                     className="bg-[#333B40] border border-[#606060] h-8 rounded-xl px-3 py-1 text-white"
                     value={tipoEntrega}
-                    onChange={(e) => setTipoEntrega(e.target.value as any)}
+                    onChange={(e) => setTipoEntrega(e.target.value as "Perecível" | "Volumosa")}
                   >
                     <option value="Perecível">Perecível</option>
                     <option value="Volumosa">Volumosa</option>
@@ -221,7 +232,7 @@ const ManualRegisterPage: React.FC = () => {
                   <select
                     className="bg-[#333B40] border border-[#606060] h-8 rounded-xl px-3 py-1 text-white"
                     value={tipoUnidade}
-                    onChange={(e) => setTipoUnidade(e.target.value as any)}
+                    onChange={(e) => setTipoUnidade(e.target.value as "Casa" | "Apartamento")}
                   >
                     <option value="Apartamento">Apartamento</option>
                     <option value="Casa">Casa</option>

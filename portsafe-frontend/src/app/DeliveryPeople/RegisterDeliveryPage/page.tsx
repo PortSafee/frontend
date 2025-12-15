@@ -8,6 +8,7 @@ import Logo from "@/assets/logo_portsafe.png";
 import { useRouter } from "next/navigation";
 import { BsPeople } from "react-icons/bs";
 import axios from "axios";
+import Image from "next/image";
 
 /*Definir Interfaces TypeScript para Payload e Resposta*/
 interface ValidarDestinatarioRequest {
@@ -141,9 +142,10 @@ const RegisterDeliveryPage: React.FC = () => {
         setPodeRetentar(data.podeRetentar);
         setPodeAcionarPortaria(data.podeAcionarPortaria);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro na validação:", error);
-      setErrorMessage(error.response?.data?.message || "Erro ao validar destinatário. Tente novamente.");
+      const err = error as { response?: { data?: { message?: string } } };
+      setErrorMessage(err.response?.data?.message || "Erro ao validar destinatário. Tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -154,9 +156,11 @@ const RegisterDeliveryPage: React.FC = () => {
       <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134] overflow-x-hidden">
         {/* Lado esquerdo - Logo e nome */}
         <div className="flex flex-col justify-center items-center w-full md:w-1/2 text-center p-6">
-          <img
-            src={Logo.src}
+          <Image
+            src={Logo}
             alt="Logo PortSafe"
+            width={320}
+            height={320}
             className="w-50 sm:w-60 md:w-80 mb-2 max-w-full"
           />
           <p className="text-white text-lg sm:text-xl md:text-2xl">
@@ -231,9 +235,11 @@ const RegisterDeliveryPage: React.FC = () => {
       
       {/* Lado esquerdo - Logo e nome */}
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 text-center p-6">
-        <img
-          src={Logo.src}
+        <Image
+          src={Logo}
           alt="Logo PortSafe"
+          width={320}
+          height={320}
           className="w-50 sm:w-60 md:w-80 mb-2 max-w-full"
         />
         <p className="text-white text-lg sm:text-xl md:text-2xl">

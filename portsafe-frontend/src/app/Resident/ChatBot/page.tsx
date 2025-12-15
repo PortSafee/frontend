@@ -16,7 +16,7 @@ interface Message {
 
 const ChatBot: React.FC = () => {
     const router = useRouter();
-    const [morador, setMorador] = useState<any>(null);
+    const [morador, setMorador] = useState<Record<string, unknown> | null>(null);
 
 // Carrega o morador do localStorage
   useEffect(() => {
@@ -98,7 +98,7 @@ const ChatBot: React.FC = () => {
         <div className="min-h-screen bg-[#131826] text-white overflow-x-hidden">
             {/* Barra de navegação */}
             <NavBar
-                    nome={morador?.nome || morador?.Nome || "Morador"}
+                    nome={(morador?.nome || morador?.Nome || "Morador") as string}
                     funcao="Painel do Morador"
                     tipoUsuario="morador"
                     onSairClick={() => router.push("/General/LoginPage")}

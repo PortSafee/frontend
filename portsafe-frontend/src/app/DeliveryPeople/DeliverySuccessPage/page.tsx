@@ -6,10 +6,17 @@ import Button from "@/components/Button";
 import { GoCheckCircle } from "react-icons/go";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Image from "next/image";
+
+interface EntregaData {
+  entregaId?: number;
+  codigoEntrega?: string;
+  numeroArmario?: number;
+}
 
 const DeliverySuccessPage: React.FC = () => {
   const router = useRouter();
-  const [entrega, setEntrega] = useState<any>(null);
+  const [entrega, setEntrega] = useState<EntregaData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,7 +50,7 @@ const DeliverySuccessPage: React.FC = () => {
     return (
       <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134]">
         <div className="flex flex-col justify-center items-center w-full md:w-1/2 p-6">
-          <img src={Logo.src} alt="Logo" className="w-80" />
+          <Image src={Logo} alt="Logo" width={320} height={320} className="w-80" />
         </div>
         <div className="flex flex-col justify-center items-center w-full md:w-1/2">
           <div className="bg-[#ffffff18] border-2 border-[#606060] rounded-2xl p-10">
@@ -58,7 +65,7 @@ const DeliverySuccessPage: React.FC = () => {
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134] overflow-x-hidden">
       <div className="flex flex-col justify-center items-center w-full md:w-1/2 text-center p-6">
-        <img src={Logo.src} alt="Logo PortSafe" className="w-50 sm:w-60 md:w-80 mb-2 max-w-full" />
+        <Image src={Logo} alt="Logo PortSafe" width={320} height={320} className="w-50 sm:w-60 md:w-80 mb-2 max-w-full" />
         <p className="text-white text-lg sm:text-xl md:text-2xl">Sistema de Entregas do Condomínio</p>
       </div>
 

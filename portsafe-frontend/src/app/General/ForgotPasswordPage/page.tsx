@@ -7,6 +7,7 @@ import IconLogo from '@/assets/icons/icon_logo.png';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import BackButton from '@/components/BackButton';
+import Image from 'next/image';
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -26,7 +27,7 @@ const ForgotPasswordPage: React.FC = () => {
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         '/api/Auth/SolicitarResetSenha',
         { Email: email },
         { headers: { 'Content-Type': 'application/json' } }
@@ -40,13 +41,15 @@ const ForgotPasswordPage: React.FC = () => {
         router.push(`/General/ResetPasswordWithCodePage?email=${encodeURIComponent(email)}`);
       }, 2000);
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Qualquer erro (500, CORS, rede, etc.)
       console.error('Erro ao solicitar reset:', err);
 
-      if (err.response?.data?.Message) {
-        setError(err.response.data.Message);
-      } else if (err.message.includes('Network Error')) {
+      const error = err as { response?: { data?: { Message?: string } }; message?: string };
+
+      if (error.response?.data?.Message) {
+        setError(error.response.data.Message);
+      } else if (error.message?.includes('Network Error')) {
         setError('Erro de conexão. Verifique se o backend está rodando.');
       } else {
         setError('Erro ao enviar solicitação. Tente novamente.');
@@ -76,7 +79,7 @@ const ForgotPasswordPage: React.FC = () => {
             <h1 className="title font-marmelad text-2xl">Esqueceu a senha?</h1>
             <h3>Recupere o acesso à sua conta</h3>
           </div>
-          <img src={IconLogo.src} alt="Logo" className="w-[24%] max-w-[120px] min-w-[60px]" />
+          <Image src={IconLogo} alt="Logo" width={120} height={120} className="w-[24%] max-w-[120px] min-w-[60px]" />
         </div>
 
         <div className="px-10 py-8 space-y-6">

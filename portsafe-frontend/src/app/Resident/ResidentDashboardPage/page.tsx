@@ -45,7 +45,7 @@ const ResidentDashboard: React.FC = () => {
   const [searchText, setSearchText] = useState("");
 
   // Estado dos dados
-  const [morador, setMorador] = useState<any>(null);
+  const [morador, setMorador] = useState<Record<string, unknown> | null>(null);
   const [todasEntregas, setTodasEntregas] = useState<UIEntrega[]>([]);
   const [entregasAtivas, setEntregasAtivas] = useState<UIEntrega[]>([]);
   const [entregasHistorico, setEntregasHistorico] = useState<UIEntrega[]>([]);
@@ -59,17 +59,18 @@ const ResidentDashboard: React.FC = () => {
   // Carregar entregas quando morador estiver disponível
   useEffect(() => {
     if (morador) carregarEntregas();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [morador]);
 
   // Função para normalizar entrega
-  const normalizarEntrega = (e: any): UIEntrega => ({
-    Id: e.Id ?? e.id,
-    enderecoGerado: e.EnderecoGerado ?? e.enderecoGerado,
-    codigoEntrega: e.CodigoEntrega ?? e.codigoEntrega,
-    dataHoraRegistro: e.DataHoraRegistro ?? e.dataHoraRegistro,
-    dataHoraRetirada: e.DataHoraRetirada ?? e.dataHoraRetirada,
-    status: typeof e.Status === "number" ? e.Status : Number(e.status ?? 0),
-    armarioId: e.ArmarioId ?? e.ArmariumId ?? null,
+  const normalizarEntrega = (e: Record<string, unknown>): UIEntrega => ({
+    Id: (e.Id ?? e.id) as number,
+    enderecoGerado: (e.EnderecoGerado ?? e.enderecoGerado) as string | undefined,
+    codigoEntrega: (e.CodigoEntrega ?? e.codigoEntrega) as string | null | undefined,
+    dataHoraRegistro: (e.DataHoraRegistro ?? e.dataHoraRegistro) as string | null | undefined,
+    dataHoraRetirada: (e.DataHoraRetirada ?? e.dataHoraRetirada) as string | null | undefined,
+    status: typeof e.Status === "number" ? e.Status : Number((e.status ?? 0) as number | string),
+    armarioId: (e.ArmarioId ?? e.ArmariumId ?? null) as number | null,
   });
 
   // Função para carregar entregas
@@ -141,7 +142,7 @@ const ResidentDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#131826] text-white overflow-x-hidden">
       <NavBar
-        nome={morador?.nome ?? morador?.Nome ?? "Morador"}
+        nome={(morador?.nome ?? morador?.Nome ?? "Morador") as string}
         funcao="Painel do Morador"
         tipoUsuario="morador"
         onSairClick={() => router.push("/General/LoginPage")}
@@ -160,11 +161,11 @@ const ResidentDashboard: React.FC = () => {
         {/* Perfil desktop */}
         <div className="hidden lg:block lg:w-80 mx-auto lg:mx-0">
           <MyProfile
-            nome={morador?.nome ?? morador?.Nome}
+            nome={(morador?.nome ?? morador?.Nome) as string}
             cargo="Morador"
-            apartamento={morador?.apartamento ?? morador?.Apartamento}
-            condominio={morador?.condominio ?? morador?.Condominio}
-            status={morador?.status ?? morador?.Status}
+            apartamento={(morador?.apartamento ?? morador?.Apartamento) as string}
+            condominio={(morador?.condominio ?? morador?.Condominio) as string}
+            status={(morador?.status ?? morador?.Status) as string}
             tipoUsuario="morador"
           />
         </div>
@@ -367,11 +368,11 @@ const ResidentDashboard: React.FC = () => {
             />
 
             <MyProfile
-              nome={morador?.nome ?? morador?.Nome}
+              nome={(morador?.nome ?? morador?.Nome) as string}
               cargo="Morador"
-              apartamento={morador?.apartamento ?? morador?.Apartamento}
-              condominio={morador?.condominio ?? morador?.Condominio}
-              status={morador?.status ?? morador?.Status}
+              apartamento={(morador?.apartamento ?? morador?.Apartamento) as string}
+              condominio={(morador?.condominio ?? morador?.Condominio) as string}
+              status={(morador?.status ?? morador?.Status) as string}
               tipoUsuario="morador"
             />
           </div>

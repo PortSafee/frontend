@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import IconLogo from '@/assets/icons/icon_logo.png';
 import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 
-const ResetPasswordWithCode: React.FC = () => {
+function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const emailFromUrl = searchParams.get('email'); 
@@ -39,7 +40,7 @@ const ResetPasswordWithCode: React.FC = () => {
     }
 
     try {
-      const response = await axios.post('/api/Auth/RedefinirSenha', {
+      await axios.post('/api/Auth/RedefinirSenha', {
         Email: email,
         Token: code,
         NovaSenha: password,
@@ -51,8 +52,9 @@ const ResetPasswordWithCode: React.FC = () => {
         router.push('/General/LoginPage');
       }, 2000);
 
-    } catch (err: any) {
-      const msg = err.response?.data?.Message || 'Código inválido ou expirado.';
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { Message?: string } } };
+      const msg = error.response?.data?.Message || 'Código inválido ou expirado.';
       setError(msg);
     }
   };
@@ -78,7 +80,7 @@ const ResetPasswordWithCode: React.FC = () => {
             <h1 className="title font-marmelad text-2xl">Redefinir Senha</h1>
             <h3>Digite o código recebido por e-mail</h3>
           </div>
-          <img src={IconLogo.src} alt="Logo" className="w-[24%] max-w-[120px]" />
+          <Image src={IconLogo} alt="Logo" width={120} height={120} className="w-[24%] max-w-[120px]" />
         </div>
 
         <div className="px-10 py-6 !space-y-4">
@@ -124,6 +126,14 @@ const ResetPasswordWithCode: React.FC = () => {
         </div>
       </div>
     </div>
+  );
+}
+
+const ResetPasswordWithCode: React.FC = () => {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#002236] via-black to-[#002134] text-white">Carregando...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 };
 

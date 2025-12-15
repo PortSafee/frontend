@@ -5,6 +5,7 @@ import Logo from "@/assets/logo_portsafe.png";
 import Button from "@/components/Button";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Image from "next/image";
 
 interface ArmarioResponse {
   sucesso: boolean;
@@ -54,9 +55,10 @@ const DeliveryInstructionsPage: React.FC = () => {
       } else {
         setError(response.data.mensagem || "Nenhum armário disponível.");
       }
-    } catch (err: any) {
-      console.error("Erro completo:", err.response || err);
-      const msg = err.response?.data?.mensagem || err.response?.data?.Message || "Erro ao reservar armário";
+    } catch (err: unknown) {
+      console.error("Erro completo:", err);
+      const error = err as { response?: { data?: { mensagem?: string; Message?: string } } };
+      const msg = error.response?.data?.mensagem || error.response?.data?.Message || "Erro ao reservar armário";
       setError(msg);
     } finally {
       setLoading(false);
@@ -86,7 +88,7 @@ const DeliveryInstructionsPage: React.FC = () => {
     return (
       <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134]">
         <div className="flex flex-col justify-center items-center w-full md:w-1/2 text-center p-6">
-          <img src={Logo.src} alt="Logo PortSafe" className="w-60 md:w-80 mb-2" />
+          <Image src={Logo} alt="Logo PortSafe" width={320} height={320} className="w-60 md:w-80 mb-2" />
           <p className="text-white text-xl">Sistema de Entregas do Condomínio</p>
         </div>
         <div className="flex flex-col justify-center items-center w-full md:w-1/2">
@@ -103,7 +105,7 @@ const DeliveryInstructionsPage: React.FC = () => {
     return (
       <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134]">
         <div className="flex flex-col justify-center items-center w-full md:w-1/2 text-center p-6">
-          <img src={Logo.src} alt="Logo PortSafe" className="w-60 md:w-80 mb-2" />
+          <Image src={Logo} alt="Logo PortSafe" width={320} height={320} className="w-60 md:w-80 mb-2" />
         </div>
         <div className="flex flex-col justify-center items-center w-full md:w-1/2">
           <div className="bg-[#ffffff18] border-2 border-[#606060] rounded-2xl p-10 text-center max-w-md">
@@ -121,7 +123,7 @@ const DeliveryInstructionsPage: React.FC = () => {
       <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-r from-[#002236] via-black to-[#002134] overflow-x-hidden">
         {/* Lado esquerdo - Logo */}
         <div className="flex flex-col justify-center items-center w-full md:w-1/2 text-center p-6">
-          <img src={Logo.src} alt="Logo PortSafe" className="w-50 sm:w-60 md:w-80 mb-2 max-w-full" />
+          <Image src={Logo} alt="Logo PortSafe" width={320} height={320} className="w-50 sm:w-60 md:w-80 mb-2 max-w-full" />
           <p className="text-white text-lg sm:text-xl md:text-2xl">Sistema de Entregas do Condomínio</p>
         </div>
 
@@ -170,7 +172,7 @@ const DeliveryInstructionsPage: React.FC = () => {
                 <li>2. Abra a porta (já está destrancada)</li>
                 <li>3. Coloque a encomenda dentro</li>
                 <li>4. Feche a porta completamente</li>
-                <li>5. Clique em "Confirmar Depósito"</li>
+                <li>5. Clique em &quot;Confirmar Depósito&quot;</li>
               </ol>
             </div>
 

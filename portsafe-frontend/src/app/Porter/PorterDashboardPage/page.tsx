@@ -21,9 +21,8 @@ const STATUS_STRING_MAP: Record<string, string> = {
 };
 
 // Função para mapear o status
-const statusParaTexto = (entrega: any): string => {
-  const status = entrega.Status ?? entrega.status ?? "";
-  const statusNormalizado = status.toString().trim();
+const statusParaTexto = (entrega: Record<string, unknown>): string => {
+  const status = (entrega.Status ?? entrega.status ?? "").toString().trim();
 
 
   const mapNum: Record<number, string> = {
@@ -37,8 +36,8 @@ const statusParaTexto = (entrega: any): string => {
   };
 
   // Tenta primeiro usar o mapeamento para strings
-  if (statusNormalizado in STATUS_STRING_MAP) {
-    return STATUS_STRING_MAP[statusNormalizado];
+  if (status in STATUS_STRING_MAP) {
+    return STATUS_STRING_MAP[status];
   }
 
   // Caso o status seja um número, verifica o mapeamento de números
@@ -53,8 +52,8 @@ const statusParaTexto = (entrega: any): string => {
 
 
 const PorterDashboard: React.FC = () => {
-  const [porteiro, setPorteiro] = useState<any>(null);
-  const [entregas, setEntregas] = useState<any[]>([]);
+  const [porteiro, setPorteiro] = useState<Record<string, unknown> | null>(null);
+  const [entregas, setEntregas] = useState<Record<string, unknown>[]>([]);
   const [searchText, setSearchText] = useState("");
   const router = useRouter();
 
@@ -70,7 +69,7 @@ useEffect(() => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      const normalizadas = (data ?? []).map((e: any) => ({
+      const normalizadas = (data ?? []).map((e: Record<string, unknown>) => ({
         ...e,
         id: e.Id ?? e.id,
         nomeDestinatario: e.NomeDestinatario ?? e.nomeDestinatario ?? "Não informado",
@@ -91,7 +90,7 @@ useEffect(() => {
   // Filtros
   const entregasHoje = entregas.filter((e) => {
     if (!e.dataHoraRegistro) return false;
-    const d = new Date(e.dataHoraRegistro);
+    const d = new Date(e.dataHoraRegistro as string);
     const hoje = new Date();
     return (
       d.getDate() === hoje.getDate() &&
@@ -114,16 +113,16 @@ useEffect(() => {
   const ultimaEntrega = entregas[0]; 
 
   const entregasFiltradas = entregas.filter((e) =>
-    e.nomeDestinatario.toLowerCase().includes(searchText.toLowerCase())
+    (e.nomeDestinatario as string).toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const isNaPortaria = (entrega: any) =>
-    ["NaPortaria", "RedirecionadoPortaria", 5].includes(entrega.statusRaw);
+  const isNaPortaria = (entrega: Record<string, unknown>) =>
+    ["NaPortaria", "RedirecionadoPortaria", 5].includes(entrega.statusRaw as string | number);
 
   return (
     <div className="min-h-screen bg-[#131826] text-white overflow-x-hidden">
       <NavBar
-        nome={porteiro?.nome || porteiro?.Nome || "Porteiro"}
+        nome={(porteiro?.nome || porteiro?.Nome || "Porteiro") as string}
         funcao="Painel do Porteiro"
         tipoUsuario="funcionario"
         onSairClick={() => router.push("/General/LoginPage")}
@@ -133,11 +132,11 @@ useEffect(() => {
         {/* Perfil */}
         <div className="w-full lg:w-80 mx-auto lg:mx-0">
           <MyProfile
-            nome={porteiro?.nome || porteiro?.Nome}
-            cargo={porteiro?.cargo || "Porteiro Principal"}
-            turno={porteiro?.turno || "Manhã - 06:00 às 14:00"}
-            condominio={porteiro?.condominio || "Residencial Jardins"}
-            status={porteiro?.status || "Em serviço"}
+            nome={(porteiro?.nome || porteiro?.Nome) as string}
+            cargo={(porteiro?.cargo || "Porteiro Principal") as string}
+            turno={(porteiro?.turno || "Manhã - 06:00 às 14:00") as string}
+            condominio={(porteiro?.condominio || "Residencial Jardins") as string}
+            status={(porteiro?.status || "Em serviço") as string}
             tipoUsuario="funcionario"
           />
         </div>
@@ -172,7 +171,7 @@ useEffect(() => {
                 <h3 className="title font-marmelad !text-lg sm:!text-xl font-semibold">Última Entrega</h3>
               </div>
               <p className="!text-xl sm:!text-2xl font-extralight mt-4">
-                {ultimaEntrega?.nomeDestinatario || "Nenhum"}
+                {(ultimaEntrega?.nomeDestinatario as string) || "Nenhum"}
               </p>
               <p className="text-xs sm:text-sm text-[#4ADD80] mt-4">
                 Morador do Condomínio
@@ -226,7 +225,7 @@ useEffect(() => {
               <div className="space-y-4">
                 {entregasFiltradas.map((entrega) => (
                   <div
-                    key={entrega.id}
+                    key={entrega.id as string | number}
                     className="bg-[#3F434E] border border-[#012032] rounded-xl p-4 flex flex-col sm:flex-row justify-between gap-4"
                   >
                     <div className="flex items-start gap-3 flex-1">
@@ -238,7 +237,7 @@ useEffect(() => {
                       <div className="flex-1">
                         <div className="flex flex-col sm:flex-row gap-2">
                           <span className="font-bold text-white truncate">
-                            {entrega.nomeDestinatario}
+                            {entrega.nomeDestinatario as string}
                           </span>
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -251,11 +250,11 @@ useEffect(() => {
                           </span>
                         </div>
                         <p className="text-xs text-[#D7D7D7]">
-                          {entrega.enderecoGerado}
+                          {entrega.enderecoGerado as string}
                         </p>
                         <p className="text-xs text-[#D7D7D7]">
                           {entrega.dataHoraRegistro
-                            ? new Date(entrega.dataHoraRegistro).toLocaleString("pt-BR")
+                            ? new Date(entrega.dataHoraRegistro as string).toLocaleString("pt-BR")
                             : "-"}
                         </p>
                       </div>

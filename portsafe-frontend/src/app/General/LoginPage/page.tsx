@@ -26,7 +26,7 @@ const LoginPage: React.FC = () => {
   };
 
   // utilitário para pegar campos ignorando case
-  const getAny = (obj: any, keys: string[]) => {
+  const getAny = (obj: Record<string, unknown>, keys: string[]) => {
     if (!obj) return undefined;
     for (const k of keys) {
       if (k in obj && obj[k] != null) return obj[k];
@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
   };
 
   // detectar se é morador baseado no objeto retornado
-  const isMoradorFromUsuario = (usuario: any) => {
+  const isMoradorFromUsuario = (usuario: Record<string, unknown>) => {
     const cpf = getAny(usuario, ['CPF', 'cpf', 'Cpf']);
     const unidadeId = getAny(usuario, ['UnidadeId', 'unidadeId']);
     const photo = getAny(usuario, ['Photo', 'photo']);
