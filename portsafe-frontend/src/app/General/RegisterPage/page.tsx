@@ -38,8 +38,7 @@ const RegisterPage: React.FC = () => {
     const fetchCondominios = async () => {
       try {
         const response = await axios.get('/api/Condominio');
-        console.log('Condomínios carregados:', response.data);
-        console.log('Primeiro condomínio:', response.data[0]);
+
         setCondominios(response.data);
       } catch (error) {
         console.error('Erro ao buscar condomínios:', error);
@@ -139,7 +138,6 @@ const RegisterPage: React.FC = () => {
     }
 
     try {
-      console.log('Dados enviados:', requestData); // Debug
       const response = await axios.post(
         endpoint,
         requestData,
@@ -163,8 +161,6 @@ const RegisterPage: React.FC = () => {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log('Erro completo:', error.response?.data); // Debug detalhado
-        console.log('Status:', error.response?.status);
         const errorMessage =
           error.response?.data?.Message || error.response?.data?.message || 'Erro no registro. Tente novamente!';
         setError(errorMessage);

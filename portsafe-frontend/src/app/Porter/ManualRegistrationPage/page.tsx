@@ -84,7 +84,6 @@ const ManualRegisterPage: React.FC = () => {
               CEP: null,
             };
 
-      console.log("Enviando payload ValidarDestinatario:", bodyValidacao);
 
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://portsafee-api-ls93.onrender.com";
       const validarResp = await fetch(`${apiUrl}/api/Entrega/ValidarDestinatario`, {
@@ -118,8 +117,6 @@ const ManualRegisterPage: React.FC = () => {
       : "18000000" // CEP padrão para apartamentos
 };
 
-
-      console.log("Payload AcionarPortaria:", acionarPayload);
 
       const acionarResp = await fetch(`${apiUrl}/api/Entrega/AcionarPortaria`, {
         method: "POST",

@@ -80,8 +80,6 @@ const LoginPage: React.FC = () => {
 
       const { usuario, token } = response.data;
 
-      console.log("Login sucesso:", usuario);
-
       // identificar se o backend reconheceu como morador
       const ehMorador = isMoradorFromUsuario(usuario);
 
