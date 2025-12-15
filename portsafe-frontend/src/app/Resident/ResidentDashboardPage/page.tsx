@@ -79,8 +79,10 @@ const ResidentDashboard: React.FC = () => {
     if (!id) return;
 
     try {
+      const token = localStorage.getItem("token");
       const { data } = await axios.get(
-        `http://localhost:5095/api/Entrega/PorMoradorId?id=${id}&t=${Date.now()}`
+        `http://localhost:5095/api/Entrega/PorMoradorId?id=${id}&t=${Date.now()}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const lista = (data ?? []).map(normalizarEntrega);
@@ -99,8 +101,11 @@ const ResidentDashboard: React.FC = () => {
       if (![2, 4, 5, 6].includes(entrega.status))
         return alert("Esta entrega já foi retirada.");
 
+      const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5095/api/Entrega/ConfirmarRetirada?entregaId=${entrega.Id}`
+        `http://localhost:5095/api/Entrega/ConfirmarRetirada?entregaId=${entrega.Id}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       await carregarEntregas();

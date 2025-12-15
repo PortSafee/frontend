@@ -48,10 +48,14 @@ const ChatBot: React.FC = () => {
 
         try {
             // Envia a mensagem para a API
+            const token = localStorage.getItem("token");
             const response = await axios.post('/api/Chatbot/perguntar', {
                 mensagem: userMessage,
             }, {
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': token ? `Bearer ${token}` : ''
+                },
             });
 
             // Adiciona resposta do bot
